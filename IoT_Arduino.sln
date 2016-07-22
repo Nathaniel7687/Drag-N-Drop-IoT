@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoT_Arduino", "IoT_Arduino\IoT_Arduino.vcxproj", "{C5F80730-F44F-4478-BDAE-6634EFC2CA88}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoT_ArduinoActuator", "IoT_ArduinoActuator\IoT_ArduinoActuator.vcxproj", "{8CC9A429-D16B-470E-8F41-B9A1CF773D27}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoT_ArduinoSensor", "IoT_ArduinoSensor\IoT_ArduinoSensor.vcxproj", "{C5F80730-F44F-4478-BDAE-6634EFC2CA88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,6 +13,10 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8CC9A429-D16B-470E-8F41-B9A1CF773D27}.Debug|x86.ActiveCfg = Debug|Win32
+		{8CC9A429-D16B-470E-8F41-B9A1CF773D27}.Debug|x86.Build.0 = Debug|Win32
+		{8CC9A429-D16B-470E-8F41-B9A1CF773D27}.Release|x86.ActiveCfg = Release|Win32
+		{8CC9A429-D16B-470E-8F41-B9A1CF773D27}.Release|x86.Build.0 = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.Build.0 = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.ActiveCfg = Release|Win32
