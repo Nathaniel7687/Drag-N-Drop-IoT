@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="IoT_ArduinoActuator.ino" />
+    <None Include="IoT_ArduinoActuator(Buzzer).ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="__vm\.IoT_ArduinoActuator.vsarduino.h">
+    <ClInclude Include="__vm\.IoT_ArduinoActuator(Buzzer).vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

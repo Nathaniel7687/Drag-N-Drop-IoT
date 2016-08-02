@@ -24,9 +24,16 @@ DHT dht(DHTPIN, DHTTYPE);
 
 int preDistance;
 
+#define EXIST_ULTRASONIC    0b00001;
+#define EXIST_IR            0b00010;
+#define EXIST_DHT           0b00100;
+#define EXIST_LIGHT         0b01000;
+#define EXIST_GAS           0b10000;
+
 void setup()
 {
     Serial.begin(115200);
+
     dht.begin();
     pinMode(IRDISPIN, INPUT);
     pinMode(IRLEDPIN, OUTPUT);
@@ -34,22 +41,50 @@ void setup()
     pinMode(TRIGPIN, OUTPUT);   // Use LED indicator (if required)
     pinMode(LIGHTPIN, INPUT);
     pinMode(GASPIN, INPUT);
+
+    while (!Serial);
+    delay(1000);
+
+    //Serial.println();
+    //Serial.print("Test: ");
+    //Serial.println(connectionList, BIN);
 }
 
 void loop()
 {
     Serial.print(START_BIT, HEX);
-    getUltrasonic();
-    getIR();
-    getHumidityTemperature();
-    getLight();
-    getGas();
+
+    int connectionList = 0b00000;
+    char buf[3];
+
+    if (getUltrasonic()) {
+        connectionList |= EXIST_ULTRASONIC;
+    }
+
+    if (getIR()) {
+        connectionList |= EXIST_IR;
+    }
+
+    if (getHumidityTemperature()) {
+        connectionList |= EXIST_DHT;
+    }
+
+    if (getLight()) {
+        connectionList |= EXIST_LIGHT;
+    }
+
+    if (getGas()) {
+        connectionList |= EXIST_GAS;
+    }
+
+    sprintf(buf, "%02X", connectionList);
+    Serial.print(buf);
     Serial.print(END_BIT, HEX);
 
     delay(100);
 }
 
-void getUltrasonic()
+int getUltrasonic()
 {
     int maximumRange = 400; // Maximum range needed
     int minimumRange = 0; // Minimum range needed
@@ -67,8 +102,6 @@ void getUltrasonic()
     //Calculate the distance (in cm) based on the speed of sound.
     distance = duration / 58.2;
 
-    Serial.print(SENSOR_BIT_USD, HEX);
-    char buf[5];
     if (distance >= maximumRange || distance <= minimumRange) {
         /* Send a negative number to computer and Turn LED ON
         to indicate "out of range" */
@@ -83,8 +116,13 @@ void getUltrasonic()
         //digitalWrite(pin, LOW); // LED Control
     }
 
+    char buf[5];
+
     sprintf(buf, "%04X", distance);
+    Serial.print(SENSOR_BIT_USD, HEX);
     Serial.print(buf);
+
+    return distance;
 }
 
 /******************************************************************************
@@ -94,11 +132,12 @@ void getUltrasonic()
 * IRLEDPIN for 1 millisecond, and then reads the IR sensor pin to see if
 * the reflected IR has been detected
 ******************************************************************************/
-void getIR()
+int getIR()
 {
     int halfPeriod = 13; //one period at 38.5khZ is aproximately 26 microseconds
     int cycles = 38; //26 microseconds * 38 is more or less 1 millisecond
     int i;
+
     for (i = 0; i <= cycles; i++)
     {
         digitalWrite(IRLEDPIN, HIGH);
@@ -108,21 +147,24 @@ void getIR()
     }
 
     char buf[3];
-    sprintf(buf, "%02X", digitalRead(IRDISPIN));
+    int obstacle = digitalRead(IRDISPIN);
+
+    sprintf(buf, "%02X", obstacle);
     Serial.print(SENSOR_BIT_IRD, HEX);
     Serial.print(buf);//display the results
+
+    return obstacle;
 }
 
-void getHumidityTemperature()
+int getHumidityTemperature()
 {
     // Reading temperature or humidity takes about 250 milliseconds!
     // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
     float h = dht.readHumidity();
     // Read temperature as Celsius (the default)
     float t = dht.readTemperature();
-    
+
     int hic;
-    char buf[5];
 
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t)) {
@@ -135,6 +177,8 @@ void getHumidityTemperature()
         hic = dht.computeHeatIndex(t, h, false) * 100;
     }
 
+    char buf[5];
+
     Serial.print(SENSOR_BIT_DHT, HEX);
 
     sprintf(buf, "%02X%02X", (int)h, (int)t);
@@ -142,22 +186,30 @@ void getHumidityTemperature()
 
     sprintf(buf, "%04X", hic);
     Serial.print(buf);
+
+    return h + t + hic;
 }
 
-void getLight()
+int getLight()
 {
     int light = analogRead(LIGHTPIN);
     char buf[5];
+
     sprintf(buf, "%04X", light);
     Serial.print(SENSOR_BIT_PTR, HEX);
     Serial.print(buf);
+
+    return light;
 }
 
-void getGas()
+int getGas()
 {
     int gas = analogRead(GASPIN);
     char buf[5];
+
     sprintf(buf, "%04X", gas);
     Serial.print(SENSOR_BIT_GAS, HEX);
     Serial.print(buf);
+
+    return gas;
 }

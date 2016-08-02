@@ -3,24 +3,52 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoT_ArduinoActuator", "IoT_ArduinoActuator\IoT_ArduinoActuator.vcxproj", "{8CC9A429-D16B-470E-8F41-B9A1CF773D27}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoT_ArduinoSensor", "IoT_ArduinoSensor\IoT_ArduinoSensor.vcxproj", "{C5F80730-F44F-4478-BDAE-6634EFC2CA88}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoT_ArduinoActuator(Buzzer)", "IoT_ArduinoActuator(Buzzer)\IoT_ArduinoActuator(Buzzer).vcxproj", "{13A6D28C-FC33-412B-A27A-9ACE6D073262}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoT_ArduinoActuator(Fan)", "IoT_ArduinoActuator(Fan)\IoT_ArduinoActuator(Fan).vcxproj", "{ABCE694C-6856-4602-A614-268181D0169D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoT_ArduinoActuator(Servo)", "IoT_ArduinoActuator(Servo)\IoT_ArduinoActuator(Servo).vcxproj", "{AB2E53C8-E2A7-42FC-91CE-4390C2C78A74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8CC9A429-D16B-470E-8F41-B9A1CF773D27}.Debug|x86.ActiveCfg = Debug|Win32
-		{8CC9A429-D16B-470E-8F41-B9A1CF773D27}.Debug|x86.Build.0 = Debug|Win32
-		{8CC9A429-D16B-470E-8F41-B9A1CF773D27}.Release|x86.ActiveCfg = Release|Win32
-		{8CC9A429-D16B-470E-8F41-B9A1CF773D27}.Release|x86.Build.0 = Release|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x64.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.Build.0 = Debug|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x64.ActiveCfg = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.ActiveCfg = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.Build.0 = Release|Win32
+		{13A6D28C-FC33-412B-A27A-9ACE6D073262}.Debug|x64.ActiveCfg = Debug|x64
+		{13A6D28C-FC33-412B-A27A-9ACE6D073262}.Debug|x64.Build.0 = Debug|x64
+		{13A6D28C-FC33-412B-A27A-9ACE6D073262}.Debug|x86.ActiveCfg = Debug|Win32
+		{13A6D28C-FC33-412B-A27A-9ACE6D073262}.Debug|x86.Build.0 = Debug|Win32
+		{13A6D28C-FC33-412B-A27A-9ACE6D073262}.Release|x64.ActiveCfg = Release|x64
+		{13A6D28C-FC33-412B-A27A-9ACE6D073262}.Release|x64.Build.0 = Release|x64
+		{13A6D28C-FC33-412B-A27A-9ACE6D073262}.Release|x86.ActiveCfg = Release|Win32
+		{13A6D28C-FC33-412B-A27A-9ACE6D073262}.Release|x86.Build.0 = Release|Win32
+		{ABCE694C-6856-4602-A614-268181D0169D}.Debug|x64.ActiveCfg = Debug|x64
+		{ABCE694C-6856-4602-A614-268181D0169D}.Debug|x64.Build.0 = Debug|x64
+		{ABCE694C-6856-4602-A614-268181D0169D}.Debug|x86.ActiveCfg = Debug|Win32
+		{ABCE694C-6856-4602-A614-268181D0169D}.Debug|x86.Build.0 = Debug|Win32
+		{ABCE694C-6856-4602-A614-268181D0169D}.Release|x64.ActiveCfg = Release|x64
+		{ABCE694C-6856-4602-A614-268181D0169D}.Release|x64.Build.0 = Release|x64
+		{ABCE694C-6856-4602-A614-268181D0169D}.Release|x86.ActiveCfg = Release|Win32
+		{ABCE694C-6856-4602-A614-268181D0169D}.Release|x86.Build.0 = Release|Win32
+		{AB2E53C8-E2A7-42FC-91CE-4390C2C78A74}.Debug|x64.ActiveCfg = Debug|x64
+		{AB2E53C8-E2A7-42FC-91CE-4390C2C78A74}.Debug|x64.Build.0 = Debug|x64
+		{AB2E53C8-E2A7-42FC-91CE-4390C2C78A74}.Debug|x86.ActiveCfg = Debug|Win32
+		{AB2E53C8-E2A7-42FC-91CE-4390C2C78A74}.Debug|x86.Build.0 = Debug|Win32
+		{AB2E53C8-E2A7-42FC-91CE-4390C2C78A74}.Release|x64.ActiveCfg = Release|x64
+		{AB2E53C8-E2A7-42FC-91CE-4390C2C78A74}.Release|x64.Build.0 = Release|x64
+		{AB2E53C8-E2A7-42FC-91CE-4390C2C78A74}.Release|x86.ActiveCfg = Release|Win32
+		{AB2E53C8-E2A7-42FC-91CE-4390C2C78A74}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
