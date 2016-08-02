@@ -74,8 +74,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\DevelopTools\Arduino 1.6.9\libraries;D:\DevelopTools\Arduino 1.6.9\hardware\arduino\avr\libraries;C:\Users\Nathaniel\Documents\Arduino\libraries;D:\DevelopTools\Arduino 1.6.9\hardware\arduino\avr\cores\arduino;D:\DevelopTools\Arduino 1.6.9\hardware\arduino\avr\variants\mega;C:\Users\Nathaniel\Documents\Arduino\IoT_ArduinoActuator(Buzzer);D:\DevelopTools\Arduino 1.6.9\hardware\tools\avr/avr/include/;D:\DevelopTools\Arduino 1.6.9\hardware\tools\avr//avr/include/avr/;D:\DevelopTools\Arduino 1.6.9\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>C:\Users\Nathaniel\Documents\Arduino\IoT_ArduinoActuator(Buzzer)\__vm\.IoT_ArduinoActuator(Buzzer).vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>D:\DevelopTools\Arduino 1.6.9\libraries;D:\DevelopTools\Arduino 1.6.9\hardware\arduino\avr\libraries;C:\Users\Nathaniel\Documents\Arduino\libraries;D:\DevelopTools\Arduino 1.6.9\hardware\arduino\avr\cores\arduino;D:\DevelopTools\Arduino 1.6.9\hardware\arduino\avr\variants\mega;D:\Projects\VisualStudioProject\IoT_Arduino\IoT_ArduinoActuator(Buzzer);D:\DevelopTools\Arduino 1.6.9\hardware\tools\avr/avr/include/;D:\DevelopTools\Arduino 1.6.9\hardware\tools\avr//avr/include/avr/;D:\DevelopTools\Arduino 1.6.9\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>D:\Projects\VisualStudioProject\IoT_Arduino\IoT_ArduinoActuator(Buzzer)\__vm\.IoT_ArduinoActuator(Buzzer).vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <PreprocessorDefinitions>__AVR_ATmega2560__;F_CPU=16000000L;ARDUINO=10609;ARDUINO_AVR_MEGA2560;ARDUINO_ARCH_AVR;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -123,4 +123,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties arduino.upload.port="COM5" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
