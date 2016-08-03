@@ -116,11 +116,6 @@ void loop() {
         case '0':
             level = 0;
 
-            for (int i = 0; i < 500; i += 50) {
-                tone(PIN_BUZZER, i, 100);
-                delay(100);
-            }
-
             isValidInput = true;
             break;
 
