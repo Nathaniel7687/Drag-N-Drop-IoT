@@ -1,12 +1,15 @@
 #include "DHT.h"
 
-#define START_BIT 0x7700
-#define END_BIT 0xF00F
-#define SENSOR_BIT_USD 0xD2
-#define SENSOR_BIT_IRD 0xD3
-#define SENSOR_BIT_DHT 0xD4
-#define SENSOR_BIT_PTR 0xA0
-#define SENSOR_BIT_GAS 0xA8
+#define START_BIT1      0x77
+#define START_BIT2      0x00
+#define END_BIT1        0xF0
+#define END_BIT2        0x0F
+
+#define SENSOR_BIT_USD  0xD2
+#define SENSOR_BIT_IR   0xD3
+#define SENSOR_BIT_DHT  0xD4
+#define SENSOR_BIT_PTR  0xA0
+#define SENSOR_BIT_GAS  0xA8
 
 #define DHTPIN 48
 #define DHTTYPE DHT11   // DHT 11
@@ -20,15 +23,25 @@
 
 #define GASPIN 8
 
+#define SENSOR_CONNECTION   0
+#define EXIST_ULTRASONIC    0b00001
+#define EXIST_IR            0b00010
+#define EXIST_DHT           0b00100
+#define EXIST_LIGHT         0b01000
+#define EXIST_GAS           0b10000
+
 DHT dht(DHTPIN, DHTTYPE);
 
 int preDistance;
 
-#define EXIST_ULTRASONIC    0b00001;
-#define EXIST_IR            0b00010;
-#define EXIST_DHT           0b00100;
-#define EXIST_LIGHT         0b01000;
-#define EXIST_GAS           0b10000;
+int TX_data[21] = { START_BIT1,     START_BIT2,
+                    SENSOR_BIT_USD, 0,  0,
+                    SENSOR_BIT_IR,  0,
+                    SENSOR_BIT_DHT, 0,  0,  0,  0,
+                    SENSOR_BIT_PTR, 0,  0,
+                    SENSOR_BIT_GAS, 0,  0,
+                    SENSOR_CONNECTION,
+                    END_BIT1,       END_BIT2 };
 
 void setup()
 {
@@ -52,8 +65,6 @@ void setup()
 
 void loop()
 {
-    Serial.print(START_BIT, HEX);
-
     int connectionList = 0b00000;
     char buf[3];
 
@@ -77,9 +88,11 @@ void loop()
         connectionList |= EXIST_GAS;
     }
 
-    sprintf(buf, "%02X", connectionList);
-    Serial.print(buf);
-    Serial.print(END_BIT, HEX);
+    TX_data[18] = connectionList;
+
+    for (int i = 0; i < 21; i++) {
+        Serial.write(TX_data[i]);
+    }
 
     delay(100);
 }
@@ -116,11 +129,8 @@ int getUltrasonic()
         //digitalWrite(pin, LOW); // LED Control
     }
 
-    char buf[5];
-
-    sprintf(buf, "%04X", distance);
-    Serial.print(SENSOR_BIT_USD, HEX);
-    Serial.print(buf);
+    TX_data[3] = distance / 100;
+    TX_data[4] = distance % 100;
 
     return distance;
 }
@@ -146,12 +156,8 @@ int getIR()
         delayMicroseconds(halfPeriod - 1);     // - 1 to make up for digitaWrite overhead    
     }
 
-    char buf[3];
     int obstacle = digitalRead(IRDISPIN);
-
-    sprintf(buf, "%02X", obstacle);
-    Serial.print(SENSOR_BIT_IRD, HEX);
-    Serial.print(buf);//display the results
+    TX_data[6] = obstacle;
 
     return obstacle;
 }
@@ -177,15 +183,10 @@ int getHumidityTemperature()
         hic = dht.computeHeatIndex(t, h, false) * 100;
     }
 
-    char buf[5];
-
-    Serial.print(SENSOR_BIT_DHT, HEX);
-
-    sprintf(buf, "%02X%02X", (int)h, (int)t);
-    Serial.print(buf);
-
-    sprintf(buf, "%04X", hic);
-    Serial.print(buf);
+    TX_data[8] = h;
+    TX_data[9] = t;
+    TX_data[10] = hic / 100;
+    TX_data[11] = hic % 100;
 
     return h + t + hic;
 }
@@ -193,11 +194,8 @@ int getHumidityTemperature()
 int getLight()
 {
     int light = analogRead(LIGHTPIN);
-    char buf[5];
-
-    sprintf(buf, "%04X", light);
-    Serial.print(SENSOR_BIT_PTR, HEX);
-    Serial.print(buf);
+    TX_data[13] = light / 100;
+    TX_data[14] = light % 100;
 
     return light;
 }
@@ -205,11 +203,8 @@ int getLight()
 int getGas()
 {
     int gas = analogRead(GASPIN);
-    char buf[5];
-
-    sprintf(buf, "%04X", gas);
-    Serial.print(SENSOR_BIT_GAS, HEX);
-    Serial.print(buf);
+    TX_data[16] = gas / 100;
+    TX_data[17] = gas % 100;
 
     return gas;
 }

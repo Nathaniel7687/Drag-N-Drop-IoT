@@ -1,4 +1,3 @@
-
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35
@@ -91,9 +90,16 @@
 
 #define PIN_BUZZER 11
 
-#define START_BIT 0x6600
-#define END_BIT 0xF00F
+#define START_BIT1      0x66
+#define START_BIT2      0x00
+#define END_BIT1        0xF0
+#define END_BIT2        0x0F
 #define ACTUATOR_BUZZER 0xD1
+
+int level = 0;
+int TX_data[6] = { START_BIT1,      START_BIT2,
+                   ACTUATOR_BUZZER, 0,
+                   END_BIT1,        END_BIT2 };
 
 void setup() {
     Serial.begin(115200); // Set serial out if we want debugging
@@ -103,7 +109,6 @@ void setup() {
     delay(1000);
 }
 
-int level = 0;
 // LET THE WILD RUMPUS BEGIN =============================
 void loop() {
     boolean isValidInput;
@@ -170,12 +175,10 @@ void loop() {
         }
     } while (isValidInput == true);
 
-    Serial.print(START_BIT, HEX);
-    char buf[3];
-    sprintf(buf, "%02X", level);
-    Serial.print(ACTUATOR_BUZZER, HEX);
-    Serial.print(buf);
-    Serial.print(END_BIT, HEX);
+    TX_data[3] = level;
+    for (int i = 0; i < 6; i++) {
+        Serial.write(TX_data[i]);
+    }
 
     delay(100);
 }

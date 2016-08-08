@@ -11,9 +11,16 @@ http://arduino.cc/en/Tutorial/Sweep
 
 #define PIN_SERVO 10
 
-#define START_BIT 0x6600
-#define END_BIT 0xF00F
-#define ACTUATOR_SERVO 0xD0
+#define START_BIT1      0x66
+#define START_BIT2      0x00
+#define END_BIT1        0xF0
+#define END_BIT2        0x0F
+#define ACTUATOR_SERVO  0xD0
+
+int level = 0;
+int TX_data[6] = { START_BIT1,      START_BIT2,
+                   ACTUATOR_SERVO,  0,
+                   END_BIT1,        END_BIT2 };
 
 Servo myservo;  // create servo object to control a servo 
                 // twelve servo objects can be created on most boards
@@ -29,7 +36,6 @@ void setup()
     delay(1000);
 }
 
-int level = 0;
 void loop()
 {
     boolean isValidInput;
@@ -81,13 +87,10 @@ void loop()
         }
     } while (isValidInput == true);
 
-
-    Serial.print(START_BIT, HEX);
-    char buf[3];
-    sprintf(buf, "%02X", level);
-    Serial.print(ACTUATOR_SERVO, HEX);
-    Serial.print(buf);
-    Serial.print(END_BIT, HEX);
+    TX_data[3] = level;
+    for (int i = 0; i < 6; i++) {
+        Serial.write(TX_data[i]);
+    }
 
     delay(100);
 }
