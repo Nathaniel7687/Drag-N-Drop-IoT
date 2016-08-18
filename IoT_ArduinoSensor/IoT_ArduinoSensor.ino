@@ -23,24 +23,27 @@
 
 #define GASPIN 8
 
-#define SENSOR_CONNECTION   0
-#define EXIST_ULTRASONIC    0b00001
-#define EXIST_IR            0b00010
-#define EXIST_DHT           0b00100
-#define EXIST_LIGHT         0b01000
-#define EXIST_GAS           0b10000
+#define MAX_DATA_LENGTH 20
+
+//#define SENSOR_CONNECTION   0
+//#define EXIST_ULTRASONIC    0b00001
+//#define EXIST_IR            0b00010
+//#define EXIST_DHT           0b00100
+//#define EXIST_LIGHT         0b01000
+//#define EXIST_GAS           0b10000
 
 DHT dht(DHTPIN, DHTTYPE);
 
 int preDistance;
+int irStatus = 0;
 
-int TX_data[21] = { START_BIT1,     START_BIT2,
+int TX_data[MAX_DATA_LENGTH] = { START_BIT1,     START_BIT2,
                     SENSOR_BIT_USD, 0,  0,
                     SENSOR_BIT_IR,  0,
                     SENSOR_BIT_DHT, 0,  0,  0,  0,
                     SENSOR_BIT_PTR, 0,  0,
                     SENSOR_BIT_GAS, 0,  0,
-                    SENSOR_CONNECTION,
+                    //SENSOR_CONNECTION,
                     END_BIT1,       END_BIT2 };
 
 void setup()
@@ -68,29 +71,35 @@ void loop()
     int connectionList = 0b00000;
     char buf[3];
 
-    if (getUltrasonic()) {
-        connectionList |= EXIST_ULTRASONIC;
-    }
+	getUltrasonic();
+	getIR();
+	getHumidityTemperature();
+	getLight();
+	getGas();
 
-    if (getIR()) {
-        connectionList |= EXIST_IR;
-    }
+    //if (getUltrasonic()) {
+    //    connectionList |= EXIST_ULTRASONIC;
+    //}
 
-    if (getHumidityTemperature()) {
-        connectionList |= EXIST_DHT;
-    }
+    //if (getIR()) {
+    //    connectionList |= EXIST_IR;
+    //}
 
-    if (getLight()) {
-        connectionList |= EXIST_LIGHT;
-    }
+    //if (getHumidityTemperature()) {
+    //    connectionList |= EXIST_DHT;
+    //}
 
-    if (getGas()) {
-        connectionList |= EXIST_GAS;
-    }
+    //if (getLight()) {
+    //    connectionList |= EXIST_LIGHT;
+    //}
 
-    TX_data[18] = connectionList;
+    //if (getGas()) {
+    //    connectionList |= EXIST_GAS;
+    //}
 
-    for (int i = 0; i < 21; i++) {
+    //TX_data[18] = connectionList;
+
+    for (int i = 0; i < MAX_DATA_LENGTH; i++) {
         Serial.write(TX_data[i]);
     }
 
@@ -153,10 +162,29 @@ int getIR()
         digitalWrite(IRLEDPIN, HIGH);
         delayMicroseconds(halfPeriod);
         digitalWrite(IRLEDPIN, LOW);
-        delayMicroseconds(halfPeriod - 1);     // - 1 to make up for digitaWrite overhead    
+        delayMicroseconds(halfPeriod - 1);     // - 1 to make up for digitaWrite overhead
     }
 
     int obstacle = digitalRead(IRDISPIN);
+	if (irStatus == 0 && obstacle == 1) {
+		irStatus = 1;
+	}
+
+	switch (irStatus)
+	{
+	case 0:
+		obstacle = 0;
+		break;
+	case 1:
+		if (obstacle == 1) {
+			obstacle = 2;
+		}
+		else {
+			obstacle = 1;
+		}
+		break;
+	}
+
     TX_data[6] = obstacle;
 
     return obstacle;
