@@ -1,3 +1,9 @@
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <string.h> // memset()
+#include <sys/socket.h>
+#include <termios.h>
+
 #define USB_SERIAL      "/dev/ttyACM0"
 #define BAUD_RATE       115200
 #define DATA_BIT        8
@@ -43,10 +49,17 @@ int fd;
 unsigned char data[SEIRAL_MAX_BUFF];
 Sensor* sensor;
 
+int server_fd;
+struct sockaddr_in server_addr;
+
 void* thread_sendDeviceInfoToServer(void* data);
 
 void openDevice();
 void readPacket();
 void setDataFromPacket();
-void delay_millisecond();
+void sendSensorInfoToServer();
+
+void delay(float);
 void strncat_s(unsigned char*, unsigned char*, int, int);
+
+void TEST_setSensorStruct();

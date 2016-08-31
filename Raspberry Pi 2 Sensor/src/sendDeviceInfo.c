@@ -1,24 +1,16 @@
 #include "sendDeviceInfo.h"
 #include "main.h"
 #include "uart_api.h"
-#include <netinet/in.h>
-#include <string.h> // memset()
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <termios.h>
 
 void* thread_sendDeviceInfoToServer(void* data)
 {
     printf("> Create sendDeviceInfoToServer thread\n");
 
-    int server_fd;
-    struct sockaddr_in server_addr;
-
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("> Fail work to create socket fd!\n");
-        exit(-1);
+        exit(1);
     }
-    printf("> Create socket fd: %d.\n", server_fd);
+    printf("> Create server socket fd: %d\n", server_fd);
 
     memset((void*)&server_addr, 0x00, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
@@ -26,18 +18,18 @@ void* thread_sendDeviceInfoToServer(void* data)
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     server_addr.sin_port = htons(12121);
 
-    if (connect(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr))) {
-        printf("> Connect to server error!\n");
-        exit(-1);
+    while(connect(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
+        perror("> Connect to server error");
+        delay(1);
     }
 
-    sensor = (Sensor*)malloc(sizeof(sensor));
-    openDevice();
+    sensor = (Sensor*)malloc(sizeof(Sensor));
+    // openDevice();
     while (true) {
-        readPacket();
-        setDataFromPacket();
-        printf("\033[7A");
-        delay_millisecond(100);
+        // readPacket();
+        // setDataFromPacket();
+        sendSensorInfoToServer();
+        delay(0.1);
     }
 
     pthread_exit((void*)0);
@@ -57,7 +49,7 @@ void openDevice()
         }
     } else {
         printf("> %s is not accessable.\nPlease, check device!\n", USB_SERIAL);
-        exit(-1);
+        exit(1);
     }
 }
 
@@ -108,6 +100,15 @@ void setDataFromPacket()
     printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor->humidity, sensor->temperature);
     printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor->heatindex, sensor->light);
     printf("  Gas\t\t: %04d\n", sensor->gas);
+    printf("\033[7A");
+}
+
+void sendSensorInfoToServer()
+{
+    if (write(server_fd, sensor, sizeof(Sensor)) <= 0) {
+        perror("> Write to server error");
+        exit(1);
+    }
 }
 
 void strncat_s(unsigned char* target, unsigned char* buff, int target_size, int buff_size)
@@ -118,4 +119,22 @@ void strncat_s(unsigned char* target, unsigned char* buff, int target_size, int 
         target[j] = buff[i];
         // printf("%02X ", buff[i]);
     }
+}
+
+void TEST_setSensorStruct()
+{
+    printf("> Set sensing data from packet.\n");
+
+    sensor->ultrasonic = rand() % 100 + 1;
+    sensor->ir = rand() % 1 + 1;
+    sensor->humidity = rand() % 70 + 30;
+    sensor->temperature = rand() % 20 + 20;
+    sensor->heatindex = rand() % 20 + 20 + (rand() % 100) * 0.01;
+    sensor->light = rand() % 800 + 100;
+    sensor->gas = rand() % 700 + 300;
+
+    printf("  Ultrasonic\t: %03d\t\t IR\t\t: %d\n", sensor->ultrasonic, sensor->ir);
+    printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor->humidity, sensor->temperature);
+    printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor->heatindex, sensor->light);
+    printf("  Gas\t\t: %04d\n", sensor->gas);
 }

@@ -9,7 +9,7 @@ CFLAGS+=-g
 CFLAGS+=-Wall
 #CFLAGS+=-Werror
 
-TARGET=main
+TARGET=client_sensor
 INCDIR=./inc
 SRCDIR=./src
 OBJDIR=./src/obj
