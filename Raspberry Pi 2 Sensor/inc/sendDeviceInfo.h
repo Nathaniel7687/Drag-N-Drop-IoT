@@ -4,7 +4,7 @@
 #define STOP_BIT        1
 #define PARITY_BIT      0
 
-#define MAX_BUFF_SIZE   20
+#define SEIRAL_MAX_BUFF 20
 
 #define START_BIT1      0x77
 #define START_BIT2      0x00
@@ -40,7 +40,7 @@ typedef struct Sensor {
 } Sensor;
 
 int fd;
-unsigned char data[MAX_BUFF_SIZE];
+unsigned char data[SEIRAL_MAX_BUFF];
 Sensor* sensor;
 
 void* thread_sendDeviceInfoToServer(void* data);

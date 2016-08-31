@@ -1,11 +1,35 @@
 #include "sendDeviceInfo.h"
 #include "main.h"
 #include "uart_api.h"
+#include <netinet/in.h>
+#include <string.h> // memset()
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include <termios.h>
 
 void* thread_sendDeviceInfoToServer(void* data)
 {
     printf("> Create sendDeviceInfoToServer thread\n");
+
+    int server_fd;
+    struct sockaddr_in server_addr;
+
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        printf("> Fail work to create socket fd!\n");
+        exit(-1);
+    }
+    printf("> Create socket fd: %d.\n", server_fd);
+
+    memset((void*)&server_addr, 0x00, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    // TODO: necessary to change ip in inet_addr("127.0.0.1").
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_addr.sin_port = htons(12121);
+
+    if (connect(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr))) {
+        printf("> Connect to server error!\n");
+        exit(-1);
+    }
 
     sensor = (Sensor*)malloc(sizeof(sensor));
     openDevice();
@@ -41,7 +65,7 @@ void readPacket()
 {
     int readSize;
     int readTotalSize;
-    unsigned char buff[MAX_BUFF_SIZE] = { 0 };
+    unsigned char buff[SEIRAL_MAX_BUFF] = { 0 };
 
     // TCIFLUSH	 수신했지만 읽어들이지 않은 데이터를 버립니다.
     // TCOFLUSH	 쓰기응이지만 송신하고 있지 않는 데이터를 버립니다.
@@ -49,9 +73,9 @@ void readPacket()
     tcflush(fd, TCIFLUSH);
     printf("> Read packet data of sensor.\n");
 
-    // Read data until buff[MAX_BUFF_SIZE] full
-    for (readTotalSize = 0; readTotalSize < MAX_BUFF_SIZE; readTotalSize += readSize) {
-        if ((readSize = user_uart_read(fd, buff, MAX_BUFF_SIZE)) == -1) {
+    // Read data until buff[SEIRAL_MAX_BUFF] full
+    for (readTotalSize = 0; readTotalSize < SEIRAL_MAX_BUFF; readTotalSize += readSize) {
+        if ((readSize = user_uart_read(fd, buff, SEIRAL_MAX_BUFF)) == -1) {
             readSize = 0;
             continue;
         }
@@ -60,7 +84,7 @@ void readPacket()
     }
 
     printf("  ");
-    for (int i = 0; i < MAX_BUFF_SIZE; i++) {
+    for (int i = 0; i < SEIRAL_MAX_BUFF; i++) {
         printf("%02X ", data[i]);
     }
     printfln();
@@ -90,7 +114,7 @@ void strncat_s(unsigned char* target, unsigned char* buff, int target_size, int 
 {
     int i, j;
 
-    for (i = 0, j = target_size; j < MAX_BUFF_SIZE && i < buff_size; i++, j++) {
+    for (i = 0, j = target_size; j < SEIRAL_MAX_BUFF && i < buff_size; i++, j++) {
         target[j] = buff[i];
         // printf("%02X ", buff[i]);
     }
