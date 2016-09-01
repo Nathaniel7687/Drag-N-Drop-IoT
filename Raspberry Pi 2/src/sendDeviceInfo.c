@@ -85,15 +85,32 @@ void readPacket()
 void setDataFromPacket()
 {
     printf("> Set sensing data from packet.\n");
-    if (data[START_COL1] == START_BIT1 && data[START_COL2] == START_BIT2 && data[ULTRASONIC_COL] == SENSOR_BIT_USD && data[IR_COL] == SENSOR_BIT_IR && data[HT_COL] == SENSOR_BIT_DHT && data[LIGHT_COL] == SENSOR_BIT_PTR && data[GAS_COL] == SENSOR_BIT_GAS && data[END_COL1] == END_BIT1 && data[END_COL2] == END_BIT2) {
+    if (data[S_START_COL1] == START_BIT1 &&
+        data[S_START_COL2] == START_BIT2 &&
+        data[S_ULTRASONIC_COL] == SENSOR_BIT_USD &&
+        data[S_IR_COL] == SENSOR_BIT_IR &&
+        data[S_HT_COL] == SENSOR_BIT_DHT &&
+        data[S_LIGHT_COL] == SENSOR_BIT_PTR &&
+        data[S_GAS_COL] == SENSOR_BIT_GAS &&
+        data[S_END_COL1] == END_BIT1 &&
+        data[S_END_COL2] == END_BIT2) {
 
-        sensor->ultrasonic = data[ULTRASONIC_COL + 1] * 100 + data[ULTRASONIC_COL + 2];
-        sensor->ir = data[IR_COL + 1];
-        sensor->humidity = data[HT_COL + 1];
-        sensor->temperature = data[HT_COL + 2];
-        sensor->heatindex = data[HT_COL + 3] + data[HT_COL + 4] * 0.01;
-        sensor->light = data[LIGHT_COL + 1] * 100 + data[LIGHT_COL + 2];
-        sensor->gas = data[GAS_COL + 1] * 100 + data[GAS_COL + 2];
+        sensor->ultrasonic = data[S_ULTRASONIC_COL + 1] * 100 + data[S_ULTRASONIC_COL + 2];
+        sensor->ir = data[S_IR_COL + 1];
+        sensor->humidity = data[S_HT_COL + 1];
+        sensor->temperature = data[S_HT_COL + 2];
+        sensor->heatindex = data[S_HT_COL + 3] + data[S_HT_COL + 4] * 0.01;
+        sensor->light = data[S_LIGHT_COL + 1] * 100 + data[S_LIGHT_COL + 2];
+        sensor->gas = data[S_GAS_COL + 1] * 100 + data[S_GAS_COL + 2];
+    }
+    else if (data[A_START_COL1] == START_BIT1 &&
+        data[A_START_COL2] == START_BIT2 &&
+        (data[A_ACTUATOR_COL] == ACTUATOR_BIT_BUZZER ||
+        data[A_ACTUATOR_COL] == ACTUATOR_BIT_FAN ||
+        data[A_ACTUATOR_COL] == ACTUATOR_BIT_SERVO)
+        data[A_END_COL1] == END_BIT1 &&
+        data[A_END_COL2] == END_BIT2) {
+
     }
 
     printf("  Ultrasonic\t: %03d\t\t IR\t\t: %d\n", sensor->ultrasonic, sensor->ir);

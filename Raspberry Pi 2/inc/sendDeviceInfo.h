@@ -23,24 +23,28 @@
 #define SENSOR_BIT_PTR  0xA0
 #define SENSOR_BIT_GAS  0xA8
 
+#define ACTUATOR_BIT_FAN    0xD8
+#define ACTUATOR_BIT_SERVO  0xD0
+#define ACTUATOR_BIT_BUZZER 0xD1
+
 enum SENSOR_COL{
-    START_COL1      = 0,
-    START_COL2      = 1,
-    ULTRASONIC_COL  = 2,
-    IR_COL          = 5,
-    HT_COL          = 7,
-    LIGHT_COL       = 12,
-    GAS_COL         = 15,
-    END_COL1        = 18,
-    END_COL2        = 19
+    S_START_COL1      = 0,
+    S_START_COL2      = 1,
+    S_ULTRASONIC_COL  = 2,
+    S_IR_COL          = 5,
+    S_HT_COL          = 7,
+    S_LIGHT_COL       = 12,
+    S_GAS_COL         = 15,
+    S_END_COL1        = 18,
+    S_END_COL2        = 19
 };
 
 enum ACTUATOR_COL {
-    START_COL1      = 0,
-    START_COL2      = 1,
-    ACTUATOR_COL    = 2,
-    END_COL1        = 4,
-    END_COL2        = 5
+    A_START_COL1      = 0,
+    A_START_COL2      = 1,
+    A_ACTUATOR_COL    = 2,
+    A_END_COL1        = 4,
+    A_END_COL2        = 5
 };
 
 typedef struct Sensor {
@@ -53,9 +57,20 @@ typedef struct Sensor {
     int     gas;
 } Sensor;
 
+typedef struct Actuator {
+    int     ultrasonic;
+    int     ir;
+    int     humidity;
+    int     temperature;
+    float   heatindex;
+    int     light;
+    int     gas;
+} Actuator;
+
 int fd;
 unsigned char data[SEIRAL_MAX_BUFF];
 Sensor* sensor;
+Actuator* actuator;
 
 int server_fd;
 struct sockaddr_in server_addr;
