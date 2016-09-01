@@ -35,7 +35,7 @@ https://www.BananaRobotics.com
 #define PWM_LEVEL4 255  // arbitrary slow speed PWM duty cycle
 #define DIR_DELAY 1000 // brief delay for abrupt motor changes
 
-#define START_BIT1      0x66
+#define START_BIT1      0x77
 #define START_BIT2      0x00
 #define END_BIT1        0xF0
 #define END_BIT2        0x0F

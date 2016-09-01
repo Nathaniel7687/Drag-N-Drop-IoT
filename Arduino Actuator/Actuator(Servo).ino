@@ -11,7 +11,7 @@ http://arduino.cc/en/Tutorial/Sweep
 
 #define PIN_SERVO 10
 
-#define START_BIT1      0x66
+#define START_BIT1      0x77
 #define START_BIT2      0x00
 #define END_BIT1        0xF0
 #define END_BIT2        0x0F
