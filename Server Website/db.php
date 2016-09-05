@@ -1,8 +1,8 @@
 <?php
-$host = "localhost"; // 자신의 mysql
-$user = "root"; // 기본 사용자.
-$password = "0000"; // apm 기본 암호
-$DB_name = "smartfarm"; // 데이터베이스 이름 : test
+$host = "localhost";	// 자신의 mysql
+$DB_name = "master";	// 데이터베이스 이름
+$user = "root";			// 기본 사용자.
+$password = "0000";		// apm 기본 암호
 
 $conn = mysqli_connect($host, $user, $password, $DB_name);
 
