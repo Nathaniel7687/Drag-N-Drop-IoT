@@ -4,9 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>jQuery UI Droppable - Simple photo manager</title>
-  <link rel="stylesheet" href="/style/jquery-ui.css">
-  <script src="/script/jquery-ui.js" type="text/javascript"></script>
+  
   <script src="/script/jquery-1.12.4.js" type="text/javascript"></script>
+  <script src="/script/jquery-ui.js" type="text/javascript"></script>
+
+  <link rel="stylesheet" href="/style/jquery-ui.css">
+  
   <style>
     #gallery { float: left; width: 65%; min-height: 12em; }
     .gallery.custom-state-active { background: #eee; }
