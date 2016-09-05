@@ -18,17 +18,18 @@ void* thread_sendDeviceInfoToServer(void* data)
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     server_addr.sin_port = htons(12121);
 
-    while(connect(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
-        perror("> Connect to server error");
-        delay(1);
-    }
+    // while(connect(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
+    //     perror("> Connect to server error");
+    //     delay(1);
+    // }
 
     sensor = (Sensor*)malloc(sizeof(Sensor));
+    actuator = (Actuator*)malloc(sizeof(Actuator));
     openDevice();
     while (true) {
         readPacket();
         setDataFromPacket();
-        sendSensorInfoToServer();
+        // sendSensorInfoToServer();
         delay(0.1);
     }
 
@@ -57,7 +58,7 @@ void readPacket()
 {
     int readSize;
     int readTotalSize;
-    unsigned char buff[SEIRAL_MAX_BUFF] = { 0 };
+    unsigned char buff[SEIRAL_MIN_BUFF] = { 0 };
 
     // TCIFLUSH	 수신했지만 읽어들이지 않은 데이터를 버립니다.
     // TCOFLUSH	 쓰기응이지만 송신하고 있지 않는 데이터를 버립니다.
@@ -65,9 +66,8 @@ void readPacket()
     tcflush(fd, TCIFLUSH);
     printf("> Read packet data of sensor.\n");
 
-    // Read data until buff[SEIRAL_MAX_BUFF] full
-    for (readTotalSize = 0; readTotalSize < SEIRAL_MAX_BUFF; readTotalSize += readSize) {
-        if ((readSize = user_uart_read(fd, buff, SEIRAL_MAX_BUFF)) == -1) {
+    for (readTotalSize = 0; buff[0] != END_BIT1 && buff[1] != END_BIT2; readTotalSize += readSize) {
+        if ((readSize = user_uart_read(fd, buff, SEIRAL_MIN_BUFF)) == -1) {
             readSize = 0;
             continue;
         }
@@ -102,22 +102,36 @@ void setDataFromPacket()
         sensor->heatindex = data[S_HT_COL + 3] + data[S_HT_COL + 4] * 0.01;
         sensor->light = data[S_LIGHT_COL + 1] * 100 + data[S_LIGHT_COL + 2];
         sensor->gas = data[S_GAS_COL + 1] * 100 + data[S_GAS_COL + 2];
+
+        printf("  Ultrasonic\t: %03d\t\t IR\t\t: %d\n", sensor->ultrasonic, sensor->ir);
+        printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor->humidity, sensor->temperature);
+        printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor->heatindex, sensor->light);
+        printf("  Gas\t\t: %04d\n", sensor->gas);
+        // printf("\033[7A");
     }
     else if (data[A_START_COL1] == START_BIT1 &&
         data[A_START_COL2] == START_BIT2 &&
-        (data[A_ACTUATOR_COL] == ACTUATOR_BIT_BUZZER ||
-        data[A_ACTUATOR_COL] == ACTUATOR_BIT_FAN ||
-        data[A_ACTUATOR_COL] == ACTUATOR_BIT_SERVO)
         data[A_END_COL1] == END_BIT1 &&
         data[A_END_COL2] == END_BIT2) {
 
+        switch (data[A_ACTUATOR_COL]) {
+        case ACTUATOR_BIT_BUZZER:
+            actuator->buzzer = data[A_ACTUATOR_COL + 1];
+            printf("  Buzzer\t: %d\n", actuator->buzzer);
+        
+            break;
+        case ACTUATOR_BIT_FAN:
+            actuator->fan = data[A_ACTUATOR_COL + 1];
+            printf("  Fan\t: %d\n", actuator->fan);
+        
+            break;
+        case ACTUATOR_BIT_SERVO:
+            actuator->servo = data[A_ACTUATOR_COL + 1];
+            printf("  Servo\t: %d\n", actuator->servo);
+        
+            break;
+        }
     }
-
-    printf("  Ultrasonic\t: %03d\t\t IR\t\t: %d\n", sensor->ultrasonic, sensor->ir);
-    printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor->humidity, sensor->temperature);
-    printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor->heatindex, sensor->light);
-    printf("  Gas\t\t: %04d\n", sensor->gas);
-    printf("\033[7A");
 }
 
 void sendSensorInfoToServer()
@@ -140,7 +154,7 @@ void strncat_s(unsigned char* target, unsigned char* buff, int target_size, int 
 
 void TEST_setSensorStruct()
 {
-    printf("> Set sensing data from packet.\n");
+    printf("> Set sensor data from packet.\n");
 
     sensor->ultrasonic = rand() % 100 + 1;
     sensor->ir = rand() % 1 + 1;
@@ -154,4 +168,17 @@ void TEST_setSensorStruct()
     printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor->humidity, sensor->temperature);
     printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor->heatindex, sensor->light);
     printf("  Gas\t\t: %04d\n", sensor->gas);
+}
+
+void TEST_setActuatorStruct()
+{
+    printf("> Set Actuator data from packet.\n");
+
+    actuator->buzzer = rand() % 4;
+    actuator->fan = rand() % 4;
+    actuator->servo = rand() % 4;
+
+    printf("  Buzzer\t: %d\n", actuator->buzzer);
+    printf("  Fan\t: %d\n", actuator->fan);
+    printf("  Servo\t: %d\n", actuator->servo);
 }

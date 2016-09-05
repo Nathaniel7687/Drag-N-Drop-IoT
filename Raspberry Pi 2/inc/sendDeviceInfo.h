@@ -11,6 +11,7 @@
 #define PARITY_BIT      0
 
 #define SEIRAL_MAX_BUFF 20
+#define SEIRAL_MIN_BUFF 2
 
 #define START_BIT1      0x77
 #define START_BIT2      0x00
@@ -58,13 +59,9 @@ typedef struct Sensor {
 } Sensor;
 
 typedef struct Actuator {
-    int     ultrasonic;
-    int     ir;
-    int     humidity;
-    int     temperature;
-    float   heatindex;
-    int     light;
-    int     gas;
+    int     buzzer;
+    int     fan;
+    int     servo;
 } Actuator;
 
 int fd;
