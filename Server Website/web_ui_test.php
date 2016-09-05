@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>jQuery UI Droppable - Simple photo manager</title>
-
+  
   <script src="/script/jquery-1.12.4.js" type="text/javascript"></script>
   <script src="/script/jquery-ui.js" type="text/javascript"></script>
 
   <link rel="stylesheet" href="/style/jquery-ui.css">
-
+  
   <style>
     #gallery { float: left; width: 65%; min-height: 12em; }
     .gallery.custom-state-active { background: #eee; }
@@ -36,27 +36,23 @@
     #customize_function {float: left; width: 27.8%; height:  20em; padding: 1%; margin-top: 20px; margin-left: 20px; border: 2px solid #000}
   </style>
   <script>
-    $(document).ready(function database(){
-
-      if(window.XMLHttpRequest){
-        // code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp = new XMLHttpRequest();
-      } else{
-        // code for IE6, IE5
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-      }
-      xmlhttp.onreadystatechange = function(){
-        if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
-          document.getElementById("gallery").innerHTML = xmlhttp.responseText;
+    function database(){
+        if(window.XMLHttpRequest){
+          // code for IE7+, Firefox, Chrome, Opera, Safari
+          xmlhttp = new XMLHttpRequest();
+        } else{
+          // code for IE6, IE5
+          xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
-      };
-      xmlhttp.open("GET","db.php",true);
-      xmlhttp.send();
-
-       init();
-    });
-    setTimeout(function (){
-
+        xmlhttp.onreadystatechange = function(){
+          if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+            document.getElementById("gallery").innerHTML = xmlhttp.responseText;
+          }
+        };
+        xmlhttp.open("GET","db.php",true);
+        xmlhttp.send();
+      }
+    $(function(){
       var $gallery = $("#gallery");
       var $gallery2 = $("#gallery2");
       var $trash = $("#trash");
@@ -205,17 +201,15 @@
         }
         return false;
       });
-    }, 1000);
-    </script>
+    });
+  </script>
   <script>
   </script>
 </head>
-<body>
+<body onload="database()">
   <div class="ui-widget ui-helper-clearfix">
     <div id = "div-sensor-list" style="padding:10px;width:95%;float:left;border: 2px solid #000">
-      <ul id="gallery" class="gallery ui-helper-reset ui-helper-clearfix">
-
-      </ul>
+      <ul id="gallery" class="gallery ui-helper-reset ui-helper-clearfix"> </ul>
     </div>
     <div style="padding:10px;width:95%;float:left;border: 2px solid #000; margin-top: 20px;">
       <ul id="gallery2" class="gallery2 ui-helper-reset ui-helper-clearfix">

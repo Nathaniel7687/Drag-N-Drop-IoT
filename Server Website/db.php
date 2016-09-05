@@ -21,7 +21,7 @@ if($rowcnt == 1){	//right (data가 1행만 들어있는 게 맞는 지 체크)
 	while($row = mysqli_fetch_array($result)){
 		for($i=0;$i<count($filed_name);$i++){
 			if($row[$filed_name[$i]] != NULL){
-				echo "<li class='ui-widget-content ui-corner-tr ui-draggable ui-draggable-handle'>";
+				echo "<li class='ui-widget-content ui-corner-tr'>";
 				echo "<h5 class='ui-widget-header'>" . $filed_name[$i] . "</h5>";
 				echo "<a href='images/high_tatras.jpg' title='View larger image' class='ui-icon ui-icon-zoomin'> View larger</a>";
 				echo "<a href='link/to/trash/script/when/we/have/js/off' title='Delete this image' class='ui-icon ui-icon-trash'>Delete image</a></li>";
