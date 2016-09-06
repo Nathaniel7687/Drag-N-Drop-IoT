@@ -103,7 +103,7 @@ void loop()
         Serial.write(TX_data[i]);
     }
 
-    delay(100);
+    //delay(100);
 }
 
 int getUltrasonic()
