@@ -1,3 +1,3 @@
-Documentation
+Document
 -------------
 http://goo.gl/aarWaB
