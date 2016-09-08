@@ -36,8 +36,13 @@
     #customize_function {float: left; width: 27.8%; height:  20em; padding: 1%; margin-top: 20px; margin-left: 20px; border: 2px solid #000}
   </style>
   <script>
+    $(document).ready(function(){
+        setInterval(function(){
+            db();
+        },5000);
+    });
     //Ajax
-    $(document).ready(function (){
+    function db(){
         /*$.ajax({
             url:'db.php',
             type:'post',
@@ -74,7 +79,7 @@
                 }).fail(function(jqXHR,txtStatus,errorThrown){
                     alert("Actuator Data Load Failed: "+ txtStatus);
                 });
-    }); //ajax fn
+    } //ajax fn
 
     function init() {
         var $gallery = $("#gallery");
