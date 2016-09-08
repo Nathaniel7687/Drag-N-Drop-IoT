@@ -36,23 +36,45 @@
     #customize_function {float: left; width: 27.8%; height:  20em; padding: 1%; margin-top: 20px; margin-left: 20px; border: 2px solid #000}
   </style>
   <script>
-    $(document).ready(function database() {
-        if (window.XMLHttpRequest) {
-            // code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {
-            // code for IE6, IE5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                document.getElementById("gallery").innerHTML = xmlhttp.responseText;
+    //Ajax
+    $(document).ready(function (){
+        /*$.ajax({
+            url:'db.php',
+            type:'post',
+            timeout: 1000,  //통신 에러 시 max 1초 대기
+            data: "table_name=sensorlist",
+            ifModified: true,
+            error:function(xhr,status,e){
+                alert('Ajax Error');
+            },
+            success:function(db_data){
+                $('#gallery').empty();
+                $('#gallery').append(db_data);
+                $('#gallery2').empty();
+                $('#gallery2').append(db_data);
                 init();
-            }
-        };
-        xmlhttp.open("POST", "db.php", true);
-        xmlhttp.send();
-    });
+            } //success
+        }); //ajax*/
+        $.post("db.php", {table_name:"sensorlist"},
+                function(sensor,txtStatus,jqXHR){
+                    $('#gallery').empty();
+                    if(sensor == "")  {$('#gallery').append("No Sensor");}
+                    $('#gallery').append(sensor);
+                    init();
+                }).fail(function(jqXHR,txtStatus,errorThrown){
+                    alert("Sensor Data Load Failed: "+ txtStatus);
+                });
+
+        $.post("db.php", {table_name:"actuator"},
+                function(actuator,txtStatus,jqXHR){
+                    $('#gallery2').empty();
+                    if(actuator == "")  {$('#gallery2').append("No Actuator");}
+                    $('#gallery2').append(actuator);
+                    init();
+                }).fail(function(jqXHR,txtStatus,errorThrown){
+                    alert("Actuator Data Load Failed: "+ txtStatus);
+                });
+    }); //ajax fn
 
     function init() {
         var $gallery = $("#gallery");
@@ -231,31 +253,12 @@
     <div class="ui-widget ui-helper-clearfix">
         <div id="div-sensor-list" style="padding:10px;width:95%;float:left;border: 2px solid #000">
             <ul id="gallery" class="gallery ui-helper-reset ui-helper-clearfix">
-              <!-- Will be added by php ajax -->
+                <!-- Will be added by php ajax -->
             </ul>
         </div>
         <div style="padding:10px;width:95%;float:left;border: 2px solid #000; margin-top: 20px;">
             <ul id="gallery2" class="gallery2 ui-helper-reset ui-helper-clearfix">
-                <li class="ui-widget-content ui-corner-tr">
-                    <h5 class="ui-widget-header">IoT Device 1</h5>
-                    <a href="images/high_tatras4.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
-                    <a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
-                </li>
-                <li class="ui-widget-content ui-corner-tr">
-                    <h5 class="ui-widget-header">IoT Device 2</h5>
-                    <a href="images/high_tatras4.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
-                    <a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
-                </li>
-                <li class="ui-widget-content ui-corner-tr">
-                    <h5 class="ui-widget-header">IoT Device 3</h5>
-                    <a href="images/high_tatras4.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
-                    <a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
-                </li>
-                <li class="ui-widget-content ui-corner-tr">
-                    <h5 class="ui-widget-header">IoT Device 4</h5>
-                    <a href="images/high_tatras4.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
-                    <a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
-                </li>
+                <!-- Will be added by php ajax -->
             </ul>
         </div>
         <div id="trash" class="ui-widget-content ui-state-default">
