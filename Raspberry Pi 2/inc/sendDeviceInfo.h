@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include <stdbool.h> // bool, true, false
 #include <netinet/in.h>
 #include <string.h> // memset()
 #include <sys/socket.h>
@@ -10,8 +11,9 @@
 #define STOP_BIT        1
 #define PARITY_BIT      0
 
-#define SEIRAL_MAX_BUFF 20
-#define SEIRAL_MIN_BUFF 2
+#define SEIRAL_MAX_BUFF 60
+#define SENSOR_PACKET_SIZE 20
+#define ACTUATOR_PACKET_SIZE 6
 
 #define START_BIT1      0x77
 #define START_BIT2      0x00
@@ -48,6 +50,11 @@ enum ACTUATOR_COL {
     A_END_COL2        = 5
 };
 
+enum {
+    SENSOR = 1,
+    ACTUATOR = 2  
+};
+
 typedef struct Sensor {
     int     ultrasonic;
     int     ir;
@@ -64,22 +71,16 @@ typedef struct Actuator {
     int     servo;
 } Actuator;
 
-int fd;
-unsigned char data[SEIRAL_MAX_BUFF];
-Sensor* sensor;
-Actuator* actuator;
-
-int server_fd;
-struct sockaddr_in server_addr;
-
 void* thread_sendDeviceInfoToServer(void* data);
 
 void openDevice();
 void readPacket();
 void setDataFromPacket();
-void sendSensorInfoToServer();
+void sendDeviceInfoToServer();
 
-void delay(float);
 void strncat_s(unsigned char*, unsigned char*, int, int);
+void processPacket(unsigned char*, unsigned char*, int);
+void showData(int);
 
 void TEST_setSensorStruct();
+void TEST_setActuatorStruct();

@@ -1,5 +1,5 @@
 #include "manageProgram.h"
-#include "main.h"
+#include "piClient.h"
 
 void* thread_manageProgramFromServer(void* data)
 {

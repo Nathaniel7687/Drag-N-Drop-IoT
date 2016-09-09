@@ -12,7 +12,7 @@ if(!$conn){
 }
 
 //else
-$sql = "select * from sensorlist";
+$sql = "select * from SensorList";
 $result = mysqli_query($conn,$sql);
 $rowcnt = mysqli_num_rows($result);
 $filed_name = array('S_Ultrasonic','S_IR','S_Humidity','S_Temperature','S_Heatindex','S_Light','S_Gas');	//센서 필드명 집합

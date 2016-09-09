@@ -48,15 +48,13 @@
       xmlhttp.onreadystatechange = function(){
         if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
           document.getElementById("gallery").innerHTML = xmlhttp.responseText;
+	  init();
         }
       };
-      xmlhttp.open("GET","db.php",true);
+      xmlhttp.open("POST","db.php",true);
       xmlhttp.send();
-
-       init();
     });
-    setTimeout(function (){
-
+    function init(){
       var $gallery = $("#gallery");
       var $gallery2 = $("#gallery2");
       var $trash = $("#trash");
@@ -205,7 +203,7 @@
         }
         return false;
       });
-    }, 1000);
+    }
     </script>
   <script>
   </script>
