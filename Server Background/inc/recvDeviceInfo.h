@@ -42,5 +42,3 @@ void openDevice();
 void readPacket();
 void setDataFromDevice();
 void recvDeviceInfoToServer();
-
-void countTimeout(int*);
