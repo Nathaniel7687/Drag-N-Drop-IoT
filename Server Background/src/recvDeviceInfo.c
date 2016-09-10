@@ -1,6 +1,11 @@
 #include "recvDeviceInfo.h"
 #include "webServer.h"
 
+int client_fd;
+int server_fd;
+struct sockaddr_in client_addr;
+struct sockaddr_in server_addr;
+
 void* thread_recvDeviceInfoFromClient(void* data)
 {
     printf("> Create recvDeviceInfoFromClient thread\n");
@@ -46,6 +51,11 @@ void* thread_recvData(void* data) {
     Sensor sensor;
     Actuator actuator;
 
+    char query[1024];
+    MYSQL connection;
+    mysql_init(&connection);
+    mysql_real_connect(&connection, DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, NULL, 0);
+
     while (true) {
         if (!initStatus) {
             if (read(client_fd, &distinction, sizeof(distinction)) > 0) {
@@ -55,6 +65,10 @@ void* thread_recvData(void* data) {
 
         if (distinction == SENSOR) {
             if (read(client_fd, &sensor, sizeof(Sensor)) > 0) {
+                sprintf(query, "INSERT INTO SensorLog VALUES(NOW(), 0x%X, %d, %d, %d, %d, %.2f, %d, %d)",
+                    inet_addr(inet_ntoa(client_addr.sin_addr)), sensor.ultrasonic, sensor.ir, sensor.temperature, sensor.humidity, sensor.heatindex, sensor.light, sensor.gas);
+                mysql_query(&connection, query);
+
                 printf("> Client(%s) is connected\n", inet_ntoa(client_addr.sin_addr));
                 printf("  Ultrasonic\t: %03d\t\t IR\t\t: %d\n", sensor.ultrasonic, sensor.ir);
                 printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor.humidity, sensor.temperature);
@@ -63,6 +77,10 @@ void* thread_recvData(void* data) {
             }
         } else if (distinction == ACTUATOR) {
             if (read(client_fd, &actuator, sizeof(Actuator)) > 0) {
+                sprintf(query, "INSERT INTO ActuatorLog VALUES(NOW(), 0x%X, %d, %d, %d)",
+                    inet_addr(inet_ntoa(client_addr.sin_addr)), actuator.fan, actuator.servo, actuator.buzzer);
+                mysql_query(&connection, query);
+
                 printf("> Client(%s) is connected\n", inet_ntoa(client_addr.sin_addr));
                 printf("  Buzzer: %d\n", actuator.buzzer);
                 printf("  Fan\t: %d\n", actuator.fan);
@@ -74,6 +92,7 @@ void* thread_recvData(void* data) {
 
             if (timeout > 60) {
                 printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
+                mysql_close(&connection);
                 close(client_fd);
                 return 0;
             }

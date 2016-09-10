@@ -39,10 +39,12 @@ void *thread_sendDeviceInfoToServer(void *data)
     sensor = (Sensor *)calloc(1, sizeof(Sensor));
     actuator = (Actuator *)calloc(1, sizeof(Actuator));
 
-    openDevice();
+    // openDevice();
     while (true)
     {
-        readPacket();
+        // readPacket();
+        TEST_setSensorStruct();
+        // TEST_setActuatorStruct();
         setDataFromPacket();
         sendDeviceInfoToServer();
 
@@ -100,6 +102,53 @@ void readPacket()
     }
 
     processPacket(data, buff, readTotalSize);
+}
+
+void processPacket(unsigned char *target, unsigned char *buff, int buff_size)
+{
+    int index_start = 0;
+    int index_end = 0;
+    bool start = false;
+
+    // printf("  ");
+    // for (int i = 0; i < buff_size; i++)
+    // {
+    //     printf("%02X ", buff[i]);
+    // }
+    // printfln();
+
+    for (int i = 0; i < buff_size; i++)
+    {
+        if (buff[i] == START_BIT1 &&
+            buff[i + 1] == START_BIT2 &&
+            !start)
+        {
+            start = true;
+            index_start = i;
+        }
+        else if (buff[i] == END_BIT1 &&
+                 buff[i + 1] == END_BIT2 &&
+                 start)
+        {
+            start = false;
+            index_end = i + 1;
+        }
+
+        if ((index_end - index_start) == 5 ||
+            (index_end - index_start) == 19)
+        {
+            break;
+        }
+        else
+        {
+            continue;
+        }
+    }
+
+    for (int i = 0, j = index_start; j <= index_end; i++, j++)
+    {
+        data[i] = buff[j];
+    }
 }
 
 void setDataFromPacket()
@@ -208,53 +257,6 @@ void strncat_s(unsigned char *target, unsigned char *buff, int target_size, int 
     }
 }
 
-void processPacket(unsigned char *target, unsigned char *buff, int buff_size)
-{
-    int index_start = 0;
-    int index_end = 0;
-    bool start = false;
-
-    // printf("  ");
-    // for (int i = 0; i < buff_size; i++)
-    // {
-    //     printf("%02X ", buff[i]);
-    // }
-    // printfln();
-
-    for (int i = 0; i < buff_size; i++)
-    {
-        if (buff[i] == START_BIT1 &&
-            buff[i + 1] == START_BIT2 &&
-            !start)
-        {
-            start = true;
-            index_start = i;
-        }
-        else if (buff[i] == END_BIT1 &&
-                 buff[i + 1] == END_BIT2 &&
-                 start)
-        {
-            start = false;
-            index_end = i + 1;
-        }
-
-        if ((index_end - index_start) == 5 ||
-            (index_end - index_start) == 19)
-        {
-            break;
-        }
-        else
-        {
-            continue;
-        }
-    }
-
-    for (int i = 0, j = index_start; j <= index_end; i++, j++)
-    {
-        data[i] = buff[j];
-    }
-}
-
 void showData(int size)
 {
     printf("  ");
@@ -269,6 +271,7 @@ void TEST_setSensorStruct()
 {
     printf("> Set sensor data from packet.\n");
 
+    distinction = 1;
     sensor->ultrasonic = rand() % 100 + 1;
     sensor->ir = rand() % 1 + 1;
     sensor->humidity = rand() % 70 + 30;
@@ -287,6 +290,7 @@ void TEST_setActuatorStruct()
 {
     printf("> Set Actuator data from packet.\n");
 
+    distinction = 2;
     actuator->buzzer = rand() % 4;
     actuator->fan = rand() % 4;
     actuator->servo = rand() % 4;
