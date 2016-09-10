@@ -36,14 +36,14 @@ void *thread_sendDeviceInfoToServer(void *data)
         delay(1);
     }
 
-    sensor = (Sensor *)calloc(1, sizeof(Sensor));
-    actuator = (Actuator *)calloc(1, sizeof(Actuator));
+    sensor = calloc(1, sizeof(Sensor));
+    actuator = calloc(1, sizeof(Actuator));
 
-    // openDevice();
+    openDevice();
     while (true)
     {
-        // readPacket();
-        TEST_setSensorStruct();
+        readPacket();
+        // TEST_setSensorStruct();
         // TEST_setActuatorStruct();
         setDataFromPacket();
         sendDeviceInfoToServer();

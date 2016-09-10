@@ -50,12 +50,13 @@ void* thread_recvData(void* data) {
     int distinction = 0;
     Sensor sensor;
     Actuator actuator;
-
+    
     char query[1024];
     MYSQL connection;
+
     mysql_init(&connection);
     mysql_real_connect(&connection, DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, NULL, 0);
-
+    
     while (true) {
         if (!initStatus) {
             if (read(client_fd, &distinction, sizeof(distinction)) > 0) {
@@ -74,6 +75,19 @@ void* thread_recvData(void* data) {
                 printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor.humidity, sensor.temperature);
                 printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor.heatindex, sensor.light);
                 printf("  Gas\t\t: %04d\n", sensor.gas);
+
+                printf("  Query: %s\n", query);
+            }
+            else {
+                printf("  Client(%s) Timeout Count: %d\n", inet_ntoa(client_addr.sin_addr), timeout++);
+
+                if (timeout > 60) {
+                    printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
+                    mysql_close(&connection);
+                    close(client_fd);
+                }
+
+                delay(1);
             }
         } else if (distinction == ACTUATOR) {
             if (read(client_fd, &actuator, sizeof(Actuator)) > 0) {
@@ -85,16 +99,19 @@ void* thread_recvData(void* data) {
                 printf("  Buzzer: %d\n", actuator.buzzer);
                 printf("  Fan\t: %d\n", actuator.fan);
                 printf("  Servo\t: %d\n", actuator.servo);
-            }
-        } else {
-            printf("  Client(%s) Timeout Count: %d\n", inet_ntoa(client_addr.sin_addr), timeout++);
-            delay(1);
 
-            if (timeout > 60) {
-                printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
-                mysql_close(&connection);
-                close(client_fd);
-                return 0;
+                printf("  Query: %s\n", query);
+            }
+            else {
+                printf("  Client(%s) Timeout Count: %d\n", inet_ntoa(client_addr.sin_addr), timeout++);
+
+                if (timeout > 60) {
+                    printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
+                    mysql_close(&connection);
+                    close(client_fd);
+                }
+
+                delay(1);
             }
         }
     }
