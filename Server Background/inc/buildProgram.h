@@ -1,1 +1,1 @@
-void* thread_buildProgramFromServer(void* data);
+void *thread_buildProgramFromServer(void *data);

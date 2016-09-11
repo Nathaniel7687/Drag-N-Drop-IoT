@@ -6,8 +6,8 @@ int fd;
 int distinction;
 unsigned char data[SEIRAL_MAX_BUFF] = {0};
 
-Sensor* sensor;
-Actuator* actuator;
+Sensor *sensor;
+Actuator *actuator;
 
 bool initStatus;
 int server_fd;
@@ -39,16 +39,16 @@ void *thread_sendDeviceInfoToServer(void *data)
     sensor = calloc(1, sizeof(Sensor));
     actuator = calloc(1, sizeof(Actuator));
 
-    openDevice();
+    // openDevice();
     while (true)
     {
-        readPacket();
-        // TEST_setSensorStruct();
+        // readPacket();
+        TEST_setSensorStruct();
         // TEST_setActuatorStruct();
         setDataFromPacket();
         sendDeviceInfoToServer();
 
-        delay(0.1);
+        delay(1);
     }
 
     pthread_exit((void *)0);
@@ -197,7 +197,7 @@ void setDataFromPacket()
 
             showData(ACTUATOR_PACKET_SIZE);
             printf("  Buzzer\t: %d\n", actuator->buzzer);
-            
+
             break;
         case ACTUATOR_BIT_FAN:
             actuator->fan = data[A_ACTUATOR_COL + 1];
@@ -211,7 +211,7 @@ void setDataFromPacket()
 
             showData(ACTUATOR_PACKET_SIZE);
             printf("  Servo\t: %d\n", actuator->servo);
-            
+
             break;
         }
 
@@ -237,12 +237,12 @@ void sendDeviceInfoToServer()
 
     switch (distinction)
     {
-        case SENSOR:
-            write(server_fd, sensor, sizeof(Sensor));
-            break;
-        case ACTUATOR:
-            write(server_fd, actuator, sizeof(actuator));
-            break;
+    case SENSOR:
+        write(server_fd, sensor, sizeof(Sensor));
+        break;
+    case ACTUATOR:
+        write(server_fd, actuator, sizeof(actuator));
+        break;
     }
 }
 

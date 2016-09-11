@@ -65,7 +65,6 @@
                     alert("Sensor Data Load Failed: "+ txtStatus);
                 });
 
-<<<<<<< HEAD
       if(window.XMLHttpRequest){
         // code for IE7+, Firefox, Chrome, Opera, Safari
         xmlhttp = new XMLHttpRequest();
@@ -142,7 +141,6 @@
             .find( "img" )
             .animate({ height: "150px" });
           });
-=======
         $.post("db.php", {table_name:"actuator"},
                 function(actuator,txtStatus,jqXHR){
                     $('#gallery2').empty();
@@ -172,7 +170,6 @@
             containment: "document",
             helper     : "clone",
             cursor     : "move"
->>>>>>> 7a25c1c7846705cf37049804c639642666f241c3
         });
         $trash.droppable({
             accept: "#gallery > li",
@@ -301,14 +298,12 @@
                 }, 1);
             }
         }
-<<<<<<< HEAD
         return false;
       });
     }
     </script>
   <script>
   </script>
-=======
         $("ul.gallery > li").on("click", function(event) {
             var $item = $(this);
             var $target = $(event.target);
@@ -335,7 +330,6 @@
         });
     }
 </script>
->>>>>>> 7a25c1c7846705cf37049804c639642666f241c3
 </head>
 <body>
     <div class="ui-widget ui-helper-clearfix">
