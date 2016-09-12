@@ -1,5 +1,5 @@
 <?php
-$host = "165.132.121.124"; // 자신의 mysql
+$host = "localhost"; // 자신의 mysql
 $DB_name = "master"; // 데이터베이스 이름
 $user = "root"; // 기본 사용자.
 $password = "0000"; // apm 기본 암호
@@ -27,10 +27,10 @@ if (!$conn) { die("DB Connection Error: " .mysqli_error($conn)); }
 
 // else
 if($_POST['table_name'] == 'sensorlist'){
-	$sql = "select S_Ultrasonic,S_IR,S_Humidity,S_Temperature,S_Heatindex,S_Light,S_Gas from SensorList";
+	$sql = "select S_Ultrasonic,S_IR,S_Humidity,S_Temperature,S_Heatindex,S_Light,S_Gas from sensorlist";
 }
 else{
-	$sql = "select A_Fan,A_Servo,A_Buzzer from ActuatorList";
+	$sql = "select A_Fan,A_Servo,A_Buzzer from actuatorlist";
 }
 
 $result = mysqli_query($conn, $sql) or die("Error in Selecting " . mysqli_error($conn));
