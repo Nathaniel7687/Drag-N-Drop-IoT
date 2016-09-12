@@ -69,83 +69,6 @@
                 }).fail(function(jqXHR,txtStatus,errorThrown){
                     alert("Sensor Data Load Failed: "+ txtStatus);
                 });
-
-      if(window.XMLHttpRequest){
-        // code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp = new XMLHttpRequest();
-      } else{
-        // code for IE6, IE5
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-      }
-      xmlhttp.onreadystatechange = function(){
-        if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
-          document.getElementById("gallery").innerHTML = xmlhttp.responseText;
-	  init();
-        }
-      };
-      xmlhttp.open("POST","db.php",true);
-      xmlhttp.send();
-    });
-    function init(){
-      var $gallery = $("#gallery");
-      var $gallery2 = $("#gallery2");
-      var $trash = $("#trash");
-      var $trash2 = $("#trash2");
-      $("li",$gallery).draggable({
-        cancel: "a.ui-icon",revert:"invalid",containment:"document",helper:"clone",cursor:"move"
-      });
-      $("li",$gallery2).draggable({
-        cancel: "a.ui-icon",revert:"invalid",containment:"document",helper:"clone",cursor:"move"
-      });
-      $trash.droppable({
-        accept: "#gallery > li",
-        classes: {
-          "ui-droppable-active": "ui-state-highlight"
-        },
-        drop: function( event, ui ) {
-          deleteImage( ui.draggable );
-        }
-      });
-      $trash2.droppable({
-        accept: "#gallery2 > li",
-        classes: {
-          "ui-droppable-active": "ui-state-highlight"
-        },
-        drop: function(event, ui){
-          deleteImage2(ui.draggable);
-        }
-      });
-      $gallery.droppable({
-        accept: "#trash li",
-        classes: {
-          "ui-droppable-active":"custom-state-active"
-        },
-        drop: function(event, ui){
-          recycleImage(ui.draggable);
-        }
-      });
-      $gallery2.droppable({
-        accept: "#trash2 li",
-        classes: {
-          "ui-droppable-active":"custom-state-active"
-        },
-        drop: function(event, ui){
-          recycleImage2(ui.draggable);
-        }
-      });
-      var recycle_icon = "<a href='link/to/recycle/script/when/we/have/js/off' title='Recycle this image' class='ui-icon ui-icon-refresh'>Recycle image</a>";
-      function deleteImage( $item ) {
-        $item.fadeOut(function() {
-          var $list = $( "ul", $trash ).length ?
-          $( "ul", $trash ) :
-          $( "<ul class='gallery ui-helper-reset'/>" ).appendTo( $trash );
-          $item.find( "a.ui-icon-trash" ).remove();
-          $item.append( recycle_icon ).appendTo( $list ).fadeIn(function() {
-            $item
-            .animate({ width: "100px" })
-            .find( "img" )
-            .animate({ height: "150px" });
-          });
         $.post("db.php", {table_name:"actuator"},
                 function(actuator,txtStatus,jqXHR){
                     $('#gallery2').empty();
@@ -156,7 +79,6 @@
                     alert("Actuator Data Load Failed: "+ txtStatus);
                 });
     } //ajax fn
-
     function init() {
         var $gallery = $("#gallery");
         var $gallery2 = $("#gallery2");
@@ -213,7 +135,6 @@
             }
         });
         var recycle_icon = "<a href='link/to/recycle/script/when/we/have/js/off' title='Recycle this image' class='ui-icon ui-icon-refresh'>Recycle image</a>";
-
         function deleteImage($item) {
             $item.fadeOut(function() {
                 var $list = $("ul", $trash).length ?
@@ -232,7 +153,6 @@
                 });
             });
         }
-
         function deleteImage2($item) {
             $item.fadeOut(function() {
                 var $list = $("ul", $trash2).length ?
@@ -252,7 +172,6 @@
             });
         }
         var trash_icon = "<a href='link/to/trash/script/when/we/have/js/off' title='Delete this image' class='ui-icon ui-icon-trash'>Delete image</a>";
-
         function recycleImage($item) {
             $item.fadeOut(function() {
                 $item
@@ -268,7 +187,6 @@
                     .fadeIn();
             });
         }
-
         function recycleImage2($item) {
             $item.fadeOut(function() {
                 $item
@@ -284,7 +202,6 @@
                     .fadeIn();
             });
         }
-
         function viewLargerImage($link) {
             var src = $link.attr("href"),
                 title = $link.siblings("img").attr("alt"),
@@ -303,12 +220,6 @@
                 }, 1);
             }
         }
-        return false;
-      });
-    }
-    </script>
-  <script>
-  </script>
         $("ul.gallery > li").on("click", function(event) {
             var $item = $(this);
             var $target = $(event.target);

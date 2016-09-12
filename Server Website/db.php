@@ -3,7 +3,6 @@ $host = "localhost"; // 자신의 mysql
 $DB_name = "master"; // 데이터베이스 이름
 $user = "root"; // 기본 사용자.
 $password = "0000"; // apm 기본 암호
-
 $sensor_field_cnt = 7;
 $actuator_field_cnt = 3;
 $sensor_field_name = array(
@@ -20,31 +19,18 @@ $actuator_field_name = array(
 	'A_Servo',
 	'A_Buzzer'
 ); //액추에이터 필드명 집합
-
 $conn = mysqli_connect($host, $user, $password, $DB_name);
-
 if (!$conn) { die("DB Connection Error: " .mysqli_error($conn)); }
-
 // else
-if($_POST['table_name'] == 'sensorlist'){
-	$sql = "select S_Ultrasonic,S_IR,S_Humidity,S_Temperature,S_Heatindex,S_Light,S_Gas from sensorlist";
+if($_POST['table_name'] == 'SensorList'){
+	$sql = "SELECT S_Ultrasonic,S_IR,S_Humidity,S_Temperature,S_Heatindex,S_Light,S_Gas FROM SensorList";
 }
 else{
-	$sql = "select A_Fan,A_Servo,A_Buzzer from actuatorlist";
+	$sql = "SELECT A_Fan,A_Servo,A_Buzzer FROM ActuatorList";
 }
-
-<<<<<<< HEAD
-//else
-$sql = "select * from SensorList";
-$result = mysqli_query($conn,$sql);
-$rowcnt = mysqli_num_rows($result);
-$filed_name = array('S_Ultrasonic','S_IR','S_Humidity','S_Temperature','S_Heatindex','S_Light','S_Gas');	//센서 필드명 집합
-=======
 $result = mysqli_query($conn, $sql) or die("Error in Selecting " . mysqli_error($conn));
->>>>>>> 7a25c1c7846705cf37049804c639642666f241c3
-
 while ($row = mysqli_fetch_array($result)) {
-	if($_POST['table_name'] == 'sensorlist'){
+	if($_POST['table_name'] == 'SensorList'){
 		for ($i = 0; $i < $sensor_field_cnt; $i++) {	//sensor part
 			if ($row[$i] != NULL) {
 				echo "<li class='ui-widget-content ui-corner-tr'>";
@@ -54,7 +40,7 @@ while ($row = mysqli_fetch_array($result)) {
 			}	//if
 		}	//for
 	}	//if
-	else{	//table_name == actuatorlist
+	else{	//table_name == ActuatorList
 		for($j = 0; $j < $actuator_field_cnt; $j++){	//actuator part
 			if($row[$j] != NULL){
 				echo "<li class='ui-widget-content ui-corner-tr'>";
@@ -65,10 +51,5 @@ while ($row = mysqli_fetch_array($result)) {
 		}	//for
 	}
 }	//while
-
-<<<<<<< HEAD
-?>
-=======
 mysqli_close($conn);
 ?>
->>>>>>> 7a25c1c7846705cf37049804c639642666f241c3
