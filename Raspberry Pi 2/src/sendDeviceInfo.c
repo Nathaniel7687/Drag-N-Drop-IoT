@@ -39,11 +39,11 @@ void *thread_sendDeviceInfoToServer(void *data)
     sensor = calloc(1, sizeof(Sensor));
     actuator = calloc(1, sizeof(Actuator));
 
-    // openDevice();
+    openDevice();
     while (true)
     {
-        // readPacket();
-        TEST_setSensorStruct();
+        readPacket();
+        // TEST_setSensorStruct();
         // TEST_setActuatorStruct();
         setDataFromPacket();
         sendDeviceInfoToServer();

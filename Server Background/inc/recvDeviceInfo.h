@@ -6,8 +6,8 @@
 #include <termios.h>
 #include <mysql/mysql.h>
 
-#define DB_HOST "127.0.0.1"
-// #define DB_HOST "165.132.121.124"
+// #define DB_HOST "127.0.0.1"
+#define DB_HOST "165.132.121.124"
 #define DB_USER "root"
 #define DB_PASS "0000"
 #define DB_NAME "master"
