@@ -58,8 +58,11 @@ void *thread_recvData(void *data)
     char query[1024];
     MYSQL connection;
 
-    mysql_init(&connection);
-    mysql_real_connect(&connection, DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, NULL, 0);
+    if (mysql_real_connect(&connection, DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT, NULL, 0) == NULL)
+    {
+        printf("> Fail to connect mysql server.\n");
+        exit(1);
+    }
 
     while (true)
     {
@@ -75,8 +78,78 @@ void *thread_recvData(void *data)
         {
             if (read(client_fd, &sensor, sizeof(Sensor)) > 0)
             {
-                sprintf(query, "INSERT INTO SensorLog VALUES(NOW(), 0x%X, %d, %d, %d, %d, %.2f, %d, %d)",
-                        inet_addr(inet_ntoa(client_addr.sin_addr)), sensor.ultrasonic, sensor.ir, sensor.temperature, sensor.humidity, sensor.heatindex, sensor.light, sensor.gas);
+                // INSERT QUERY IN SensorLog
+                sprintf(query, "INSERT INTO SensorLog VALUES(");
+                // Current Time
+                sprintf(query, "%sNOW(2), ", query);
+                // Client IP Address
+                sprintf(query, "%s0x%X, ", query, inet_addr(inet_ntoa(client_addr.sin_addr)));
+
+                if (sensor.ultrasonic == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%d, ", query, sensor.ultrasonic);
+                }
+
+                if (sensor.ir == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%d, ", query, sensor.ir - 1);
+                }
+
+                if (sensor.temperature == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%d, ", query, sensor.temperature);
+                }
+
+                if (sensor.humidity == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%d, ", query, sensor.humidity);
+                }
+
+                if (sensor.heatindex == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%.2f, ", query, sensor.heatindex);
+                }
+
+                if (sensor.light == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%d, ", query, sensor.light);
+                }
+
+                if (sensor.gas == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%d", query, sensor.gas);
+                }
+
+                // CLOSE QUERY
+                sprintf(query, "%s)", query);
                 mysql_query(&connection, query);
 
                 printf("> Client(%s) is connected\n", inet_ntoa(client_addr.sin_addr));
@@ -86,6 +159,7 @@ void *thread_recvData(void *data)
                 printf("  Gas\t\t: %04d\n", sensor.gas);
 
                 printf("  Query: %s\n", query);
+                // printf("  Error: %s\n", mysql_error(&connection));
             }
             else
             {
@@ -96,6 +170,8 @@ void *thread_recvData(void *data)
                     printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
                     mysql_close(&connection);
                     close(client_fd);
+
+                    return 0;
                 }
 
                 delay(1);
@@ -105,8 +181,42 @@ void *thread_recvData(void *data)
         {
             if (read(client_fd, &actuator, sizeof(Actuator)) > 0)
             {
-                sprintf(query, "INSERT INTO ActuatorLog VALUES(NOW(), 0x%X, %d, %d, %d)",
-                        inet_addr(inet_ntoa(client_addr.sin_addr)), actuator.fan, actuator.servo, actuator.buzzer);
+                // INSERT QUERY IN ActuatorLog
+                sprintf(query, "INSERT INTO ActuatorLog VALUES(");
+                // Current Time
+                sprintf(query, "%sNOW(2), ", query);
+                // Client IP Address
+                sprintf(query, "%s0x%X, ", query, inet_addr(inet_ntoa(client_addr.sin_addr)));
+
+                if (actuator.fan == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%d, ", query, actuator.fan);
+                }
+
+                if (actuator.servo == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%d, ", query, actuator.servo);
+                }
+
+                if (actuator.buzzer == 0)
+                {
+                    sprintf(query, "%s%s, ", query, "NULL");
+                }
+                else
+                {
+                    sprintf(query, "%s%d", query, actuator.buzzer);
+                }
+
+                // CLOSE QUERY
+                sprintf(query, "%s)", query);
                 mysql_query(&connection, query);
 
                 printf("> Client(%s) is connected\n", inet_ntoa(client_addr.sin_addr));
@@ -115,6 +225,7 @@ void *thread_recvData(void *data)
                 printf("  Servo\t: %d\n", actuator.servo);
 
                 printf("  Query: %s\n", query);
+                // printf("  Error: %s\n", mysql_error(&connection));
             }
             else
             {
@@ -125,6 +236,8 @@ void *thread_recvData(void *data)
                     printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
                     mysql_close(&connection);
                     close(client_fd);
+
+                    return 0;
                 }
 
                 delay(1);
