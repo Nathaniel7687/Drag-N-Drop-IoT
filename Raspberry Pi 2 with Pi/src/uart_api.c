@@ -134,7 +134,7 @@ void user_uart_config(int uart_dev, int baud, int bits, int parity, int stops)
 
 int user_uart_write(int uart_dev, unsigned char *ubuf, int size)
 {
-    printf("> Send message: %s\n", ubuf);
+    // printf("> Send message: %s\n", ubuf);
     return write(uart_dev, ubuf, size);
 }
 

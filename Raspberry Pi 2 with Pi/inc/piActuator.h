@@ -18,7 +18,6 @@ typedef struct Sensor
 } Sensor;
 
 void *thread_recvDeviceInfoFromClient(void *);
-void *thread_sendData(void *);
 
 void openDevice(int *);
 

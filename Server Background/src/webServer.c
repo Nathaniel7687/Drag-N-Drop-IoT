@@ -1,6 +1,7 @@
 #include "webServer.h"
 #include "buildProgram.h"
 #include "recvDeviceInfo.h"
+#include <errno.h>
 #include <math.h>
 
 int main()
@@ -40,7 +41,7 @@ void delay(float time)
 
     req.tv_sec = s;
     req.tv_nsec = ms;
-    nanosleep(&req, NULL);
+    while (nanosleep(&req, NULL) && errno == EINTR);
 }
 
 void printfln()

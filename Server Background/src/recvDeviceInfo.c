@@ -158,7 +158,7 @@ void *thread_recvData(void *data)
                 printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor.heatindex, sensor.light);
                 printf("  Gas\t\t: %04d\n", sensor.gas);
 
-                printf("  Query: %s\n", query);
+                printf("  Query : %s\n", query);
                 // printf("  Error: %s\n", mysql_error(&connection));
             }
             else
@@ -224,7 +224,7 @@ void *thread_recvData(void *data)
                 printf("  Fan\t: %d\n", actuator.fan);
                 printf("  Servo\t: %d\n", actuator.servo);
 
-                printf("  Query: %s\n", query);
+                printf("  Query : %s\n", query);
                 // printf("  Error: %s\n", mysql_error(&connection));
             }
             else

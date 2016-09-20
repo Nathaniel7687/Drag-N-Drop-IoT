@@ -34,6 +34,7 @@ int main()
 
 void *thread_recvDeviceInfoFromClient(void *tData)
 {
+    int fd;
     int client_fd;
     int server_fd;
     struct sockaddr_in client_addr;
@@ -65,6 +66,7 @@ void *thread_recvDeviceInfoFromClient(void *tData)
         perror("> Accept error");
     }
 
+    openDevice(&fd);
     while (true)
     {
         char level[2];
@@ -102,9 +104,12 @@ void *thread_recvDeviceInfoFromClient(void *tData)
             }
             // END
 
-            pthread_t thread_id;
-            pthread_create(&thread_id, NULL, thread_sendData, (unsigned char *)level);
-            pthread_detach(thread_id);
+            // TCIFLUSH	 수신했지만 읽어들이지 않은 데이터를 버립니다.
+            // TCOFLUSH	 쓰기응이지만 송신하고 있지 않는 데이터를 버립니다.
+            // TCIOFLUSH 수신했지만 읽어들이지 않은 데이터, 및 쓰기응이지만 송신하고 있지 않는 데이터의 양쪽 모두를 버립니다.
+            tcflush(fd, TCIOFLUSH);
+            user_uart_write(fd, (unsigned char *)level, 2);
+            printf("  %d, %s\n", fd, level);
         }
         else
         {
@@ -123,17 +128,6 @@ void *thread_recvDeviceInfoFromClient(void *tData)
             }
         }
     }
-}
-
-void *thread_sendData(void *tData)
-{
-    int fd;
-    unsigned char *level = (unsigned char *)tData;
-    openDevice(&fd);
-    user_uart_write(fd, (unsigned char *)level, 2);
-    printf("  %d, %s\n", fd, level);
-
-    return 0;
 }
 
 void openDevice(int *fd)
@@ -172,8 +166,7 @@ void delay(float time)
 
     req.tv_sec = s;
     req.tv_nsec = ms;
-    while (nanosleep(&req, NULL) && errno == EINTR)
-        ;
+    while (nanosleep(&req, NULL) && errno == EINTR);
 }
 
 void printfln()
