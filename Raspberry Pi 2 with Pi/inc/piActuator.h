@@ -4,6 +4,8 @@
 #define STOP_BIT 1
 #define PARITY_BIT 0
 
+#define SERIAL_MAX_BUFF 60
+
 typedef struct Sensor
 {
     int ultrasonic;
@@ -14,6 +16,9 @@ typedef struct Sensor
     int light;
     int gas;
 } Sensor;
+
+void *thread_recvDeviceInfoFromClient(void *);
+void *thread_sendData(void *);
 
 void openDevice(int *);
 

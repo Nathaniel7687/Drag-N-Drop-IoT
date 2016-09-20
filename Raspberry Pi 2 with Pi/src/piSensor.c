@@ -7,12 +7,32 @@
 #include <math.h>
 #include <sys/socket.h>
 #include <termios.h>
+#include <pthread.h>
 #include <time.h>
 #include <unistd.h>
+#include <errno.h>
 #include "piSensor.h"
 #include "uart_api.h"
 
 int main()
+{
+    pthread_t p_thread;
+    int tid;
+    int status;
+
+    tid = pthread_create(&p_thread, NULL, thread_sendDeviceInfoToServer, NULL);
+    if (tid < 0)
+    {
+        perror("thread_sendDeviceInfoToServer() create error");
+        exit(1);
+    }
+
+    pthread_join(p_thread, (void **)&status);
+
+    return 0;
+}
+
+void *thread_sendDeviceInfoToServer(void *tData)
 {
     int fd;
     unsigned char data[SERIAL_MAX_BUFF] = {0};
@@ -44,7 +64,7 @@ int main()
     while (true)
     {
         readPacket(fd, data);
-        // TEST_setSensorStruct();
+        // TEST_setSensorStruct(&sensor);
         setDataFromPacket(&sensor, data);
         write(server_fd, &sensor, sizeof(Sensor));
         delay(1);
@@ -227,7 +247,7 @@ void delay(float time)
 
     req.tv_sec = s;
     req.tv_nsec = ms;
-    nanosleep(&req, NULL);
+    while (nanosleep(&req, NULL) && errno == EINTR);
 }
 
 void printfln()

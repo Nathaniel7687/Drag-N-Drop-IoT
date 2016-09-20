@@ -9,12 +9,31 @@
 #include <string.h> // memset()
 #include <sys/socket.h>
 #include <termios.h>
+#include <pthread.h>
+#include <errno.h>
 #include "piActuator.h"
 #include "uart_api.h"
 
 int main()
 {
-    int fd;
+    pthread_t p_thread;
+    int tid;
+    int status;
+
+    tid = pthread_create(&p_thread, NULL, thread_recvDeviceInfoFromClient, NULL);
+    if (tid < 0)
+    {
+        perror("thread_recvDeviceInfoFromClient() create error");
+        exit(1);
+    }
+
+    pthread_join(p_thread, (void **)&status);
+
+    return 0;
+}
+
+void *thread_recvDeviceInfoFromClient(void *tData)
+{
     int client_fd;
     int server_fd;
     struct sockaddr_in client_addr;
@@ -46,32 +65,73 @@ int main()
         perror("> Accept error");
     }
 
-    openDevice(&fd);
     while (true)
     {
+        char level[2];
+
         if (read(client_fd, &sensor, sizeof(Sensor)) > 0)
         {
+            timeout = 0;
             printf("> Client(%s) is connected\n", inet_ntoa(client_addr.sin_addr));
             printf("  Ultrasonic\t: %03d\t\t IR\t\t: %d\n", sensor.ultrasonic, sensor.ir);
             printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor.humidity, sensor.temperature);
             printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor.heatindex, sensor.light);
             printf("  Gas\t\t: %04d\n", sensor.gas);
 
-            
+            // TODO: Modify actuate condition.
+            // BEGIN
+            if (sensor.light > 800)
+            {
+                strcpy(level, "4");
+            }
+            else if (sensor.light > 600)
+            {
+                strcpy(level, "3");
+            }
+            else if (sensor.light > 400)
+            {
+                strcpy(level, "2");
+            }
+            else if (sensor.light > 200)
+            {
+                strcpy(level, "1");
+            }
+            else
+            {
+                strcpy(level, "0");
+            }
+            // END
+
+            pthread_t thread_id;
+            pthread_create(&thread_id, NULL, thread_sendData, (unsigned char *)level);
+            pthread_detach(thread_id);
         }
         else
         {
-            printf("  Client(%s) Timeout Count: %d\n", inet_ntoa(client_addr.sin_addr), timeout++);
-
-            if (timeout > 60)
+            if (errno != EINTR)
             {
-                printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
-                close(client_fd);
-            }
+                printf("  Client(%s) Timeout Count: %d\n", inet_ntoa(client_addr.sin_addr), ++timeout);
 
-            delay(1);
+                if (timeout > 60)
+                {
+                    printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
+                    close(client_fd);
+                    return 0;
+                }
+
+                delay(1);
+            }
         }
     }
+}
+
+void *thread_sendData(void *tData)
+{
+    int fd;
+    unsigned char *level = (unsigned char *)tData;
+    openDevice(&fd);
+    user_uart_write(fd, (unsigned char *)level, 2);
+    printf("  %d, %s\n", fd, level);
 
     return 0;
 }
@@ -90,6 +150,11 @@ void openDevice(int *fd)
             printf("> %s is opened\n", USB_SERIAL);
             printf("> Configure UART: baud rate %d, data bit %d, stop bit %d, parity bit %d\n", BAUD_RATE, DATA_BIT, STOP_BIT, PARITY_BIT);
         }
+        else
+        {
+            printf("> %s is not openned.\nPlease, check device!\n", USB_SERIAL);
+            exit(1);
+        }
     }
     else
     {
@@ -107,7 +172,8 @@ void delay(float time)
 
     req.tv_sec = s;
     req.tv_nsec = ms;
-    nanosleep(&req, NULL);
+    while (nanosleep(&req, NULL) && errno == EINTR)
+        ;
 }
 
 void printfln()

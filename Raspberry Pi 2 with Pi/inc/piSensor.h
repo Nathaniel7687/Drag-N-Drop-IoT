@@ -42,6 +42,8 @@ typedef struct Sensor
     int gas;
 } Sensor;
 
+void *thread_sendDeviceInfoToServer(void *);
+
 void openDevice(int *);
 void readPacket(int, unsigned char *);
 void setDataFromPacket(Sensor *, unsigned char[SERIAL_MAX_BUFF]);
