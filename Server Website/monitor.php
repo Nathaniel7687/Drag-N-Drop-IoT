@@ -1,0 +1,64 @@
+<?php
+include_once("db_connect.php");
+
+$sql;
+$device = $_POST['Init'];
+if ($device == 'sensor'){
+    $sql = 'SELECT  IP,
+                    S_Ultrasonic,
+                    S_IR,
+                    S_Humidity,
+                    S_Temperature,
+                    S_Heatindex,
+                    S_Light,
+                    S_Gas
+            FROM    SensorList
+            ORDER BY IP ASC';
+    $clientDevice = json_decode(stripslashes($_POST['Sensors']));
+}
+else if ($device == 'actuator') {
+    $sql = 'SELECT  IP,
+                    A_Fan,
+                    A_Servo,
+                    A_Buzzer
+            FROM    ActuatorList
+            ORDER BY IP ASC';
+    $clientDevice = json_decode(stripslashes($_POST['Actuators']));
+}
+
+$q_result = mysqli_query($conn, $sql);
+if (!$q_result) {
+    die("DB Connection Error: " . mysqli_error($conn));
+}
+
+$databaseDevice = array();
+while($row = mysqli_fetch_array($q_result)) {
+    array_push($databaseDevice, $row);
+}
+
+$existDevice = array();
+$addDevice = array();
+$deleteDevice = array();
+$clientDeviceCount = count($clientDevice);
+$databaseDeviceCount = count($databaseDevice); 
+for ($i = 0, $j = 0; $i < $clientDeviceCount && $j < $databaseDeviceCount;) {
+    if ($clientDevice[$i] == $databaseDevice[$j]['IP']) {
+        array_push($existDevice, $databaseDevice[$j]);
+        $i++;
+        $j++;
+    }
+    else if ($clientDevice[$i] > $databaseDevice[$j]['IP']) {
+        array_push($addDevice, $databaseDevice[$j]);
+        $j++;
+    }
+    else if ($clientDevice[$i] < $databaseDevice[$j]['IP']) {
+        array_push($deleteDevice, $clientDevice[$i]);
+        $i++;
+    }
+}
+
+$result = array('exist' => $existDevice, 'add' => $addDevice, 'delete' => $deleteDevice);
+
+// json_decode(stripslashes($_POST['Actuators']));
+
+echo json_encode($result);
