@@ -83,7 +83,7 @@ void *thread_recvData(void *data)
                 // Current Time
                 sprintf(query, "%sNOW(2), ", query);
                 // Client IP Address
-                sprintf(query, "%s0x%X, ", query, inet_addr(inet_ntoa(client_addr.sin_addr)));
+                sprintf(query, "%s0x%X, ", query, htonl(client_addr.sin_addr.s_addr));
 
                 if (sensor.ultrasonic == 0)
                 {
@@ -186,7 +186,7 @@ void *thread_recvData(void *data)
                 // Current Time
                 sprintf(query, "%sNOW(2), ", query);
                 // Client IP Address
-                sprintf(query, "%s0x%X, ", query, inet_addr(inet_ntoa(client_addr.sin_addr)));
+                sprintf(query, "%s0x%X, ", query, htonl(client_addr.sin_addr.s_addr));
 
                 if (actuator.fan == 0)
                 {

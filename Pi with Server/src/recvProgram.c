@@ -1,13 +1,13 @@
 #include "recvProgram.h"
 #include "piClient.h"
 
-void *thread_manageProgramFromServer(void *data)
+void *thread_recvProgramFromServer(void *data)
 {
-    printf("> Create manageProgramFromServer thread\n");
+    // printf("> Create manageProgramFromServer thread\n");
 
-    while (true) {
+    // while (true) {
         
-    }
+    // }
 
     pthread_exit((void *)0);
 }

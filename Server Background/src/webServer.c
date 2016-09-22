@@ -1,5 +1,5 @@
 #include "webServer.h"
-#include "buildProgram.h"
+#include "sendProgram.h"
 #include "recvDeviceInfo.h"
 #include <errno.h>
 #include <math.h>
@@ -17,10 +17,10 @@ int main()
         exit(1);
     }
 
-    tid = pthread_create(&p_thread[1], NULL, thread_buildProgramFromServer, NULL);
+    tid = pthread_create(&p_thread[1], NULL, thread_sendProgramToClient, NULL);
     if (tid < 0)
     {
-        perror("thread_buildProgramFromServer() create error");
+        perror("thread_sendProgramToClient() create error");
         exit(1);
     }
 

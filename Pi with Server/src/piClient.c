@@ -18,10 +18,10 @@ int main()
         exit(1);
     }
 
-    tid = pthread_create(&p_thread[1], NULL, thread_manageProgramFromServer, NULL);
+    tid = pthread_create(&p_thread[1], NULL, thread_recvProgramFromServer, NULL);
     if (tid < 0)
     {
-        perror("thread_manageProgramFromServer() create error");
+        perror("thread_recvProgramFromServer() create error");
         exit(1);
     }
 
