@@ -405,7 +405,7 @@
                     // alert(result);
                 },
                 error: function(result) {
-                    console.log('Sensor 항목을 갱신하지 못했습니다.');
+                    alert('Sensor 항목을 갱신하지 못했습니다.');
                 }
             });
 
@@ -423,7 +423,7 @@
                     // alert(result);
                 },
                 error: function(result) {
-                    console.log('Actuator 항목을 갱신하지 못했습니다.');
+                    alert('Actuator 항목을 갱신하지 못했습니다.');
                 }
             });
         }, 1000);
