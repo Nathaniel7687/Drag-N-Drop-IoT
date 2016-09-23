@@ -78,6 +78,8 @@ void *thread_recvData(void *data)
         {
             if (read(client_fd, &sensor, sizeof(Sensor)) > 0)
             {
+                timeout = 0;
+                
                 // INSERT QUERY IN SensorLog
                 sprintf(query, "INSERT INTO SensorLog VALUES(");
                 // Current Time
@@ -181,6 +183,8 @@ void *thread_recvData(void *data)
         {
             if (read(client_fd, &actuator, sizeof(Actuator)) > 0)
             {
+                timeout = 0;
+
                 // INSERT QUERY IN ActuatorLog
                 sprintf(query, "INSERT INTO ActuatorLog VALUES(");
                 // Current Time
