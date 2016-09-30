@@ -28,32 +28,46 @@ void *thread_recvProgramFromServer(void *data)
 
     while (true)
     {
-        socklen_t client_size = sizeof(client_addr);
-        client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_size);
-
-        if (client_fd == -1)
+        // This section is recieve program.
         {
-            perror("> Accept error");
-            continue;
+            socklen_t client_size = sizeof(client_addr);
+            client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_size);
+
+            if (client_fd == -1)
+            {
+                perror("> Accept error");
+                continue;
+            }
+
+            size_t fileSize = 0;
+            size_t readSize = 0;
+            FILE *file = fopen("recvedProgram", "a+");
+            char buff[MAX_FILE_BUFF_SIZE] = {'\0'};
+
+            read(client_fd, &fileSize, sizeof(fileSize));
+            printf("> File size: %zuKB\n", fileSize);
+            while (fileSize != 0)
+            {
+                readSize = read(client_fd, buff, MAX_FILE_BUFF_SIZE);
+                fileSize -= readSize;
+
+                fwrite(buff, sizeof(char), readSize, file);
+            }
+            close(client_fd);
+            fclose(file);
+            chmod("recvedProgram", 0755);
         }
 
-        size_t fileSize = 0;
-        size_t readSize = 0;
-        FILE *file = fopen("testfile", "a+");
-        char buff[MAX_FILE_BUFF_SIZE] = {'\0'};
-
-        read(client_fd, &fileSize, sizeof(fileSize));
-        printf("> File size: %zuKB\n", fileSize);
-        while (fileSize != 0)
+        // This section is run the program.
         {
-            readSize = read(client_fd, buff, MAX_FILE_BUFF_SIZE);
-            fileSize -= readSize;
-
-            fwrite(buff, sizeof(char), readSize, file);
+            int pid = fork();
+            if (pid == 0)
+            {
+                // TODO: Have to change the program path.
+                execl("/home/kh/Drag-N-Drop-IoT/Pi with Server/recvedProgram", "recvedProgram", NULL);
+                return 0;
+            }
         }
-        close(client_fd);
-        fclose(file);
-        chmod("testfile", 0755);
     }
 
     pthread_exit((void *)0);

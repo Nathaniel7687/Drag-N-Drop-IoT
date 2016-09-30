@@ -37,4 +37,4 @@ $(A_OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 clean:
 	$(DEL) -rf $(OBJDIR)/*.o
-	$(DEL) -rf $(TARGET)
+	$(DEL) -rf $(S_TARGET) $(A_TARGET)
