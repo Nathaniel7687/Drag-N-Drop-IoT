@@ -17,30 +17,22 @@
     <link href="style/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <style type="text/css" media="screen">
-        /* Move down content because we have a fixed navbar that is 50px tall */
-        
-        body {
-            padding-top: 50px;
-            padding-bottom: 20px;
-            max-height: 1200px;
-            max-width: 2000px;
-            min-width: 1000px;
-            min-height: 600px;
-        }
-        
-        .top_margin {
-            margin-top: 20px;
-        }
-        
-        .top_padding {
-            padding-top: 17px;
-        }
-        
-        .height-set {
-            min-height: 600px;
-            max-height: 1200px;
-        }
-        /* #ul-sensor-list li, #ul-act-list li{
+      /* Move down content because we have a fixed navbar that is 50px tall */
+      body {
+        padding-top: 50px;
+        padding-bottom: 20px;
+        max-height: 1200px;
+        max-width: 2000px;
+        min-width:1000px;
+        min-height: 600px;
+      }
+      .top_margin{ margin-top:20px; }
+      .top_padding{ padding-top: 17px; }
+      .height-set{
+        min-height:600px;
+        max-height:1200px;
+      }
+      /* #ul-sensor-list li, #ul-act-list li{
         float:left;
         width:100%;
         min-height: 70px;
@@ -51,319 +43,210 @@
       #ul-sensor-list li h5, #ul-act-list li h5{
         margin:0 0 0.4em;
       } */
-        
-        ul li,
-        ul li {
-            float: left;
-            width: 100%;
-            padding: 0.4em;
-            margin: 0 auto 0.4em auto;
-            text-align: center;
-        }
-        
-        ul li h5,
-        ul li h5 {
-            margin: 0 0 0.4em;
-        }
-        
-        th {
-            text-align: center;
-        }
-        
-        .table {
-            font-size: 13px;
-            margin-bottom: 0px;
-        }
-        
-        td {
-            width: 50%;
-        }
-        
-        .list-placeholder {
-            border: 1px dotted gray;
-            background-color: #E8E4E4;
-            margin: 0 1em 1em 0;
-            height: 50px;
-        }
+      ul li, ul li{
+        float:left;
+        width:100%;
+        padding:0.4em;
+        margin:0 auto 0.4em auto;
+        text-align: center;
+      }
+      ul li h5, ul li h5{
+        margin:0 0 0.4em;
+      }
+      th{
+        text-align: center;
+      }
+      .table{
+        font-size: 13px;
+        margin-bottom: 0px;
+      }
+      td{
+        width:50%;
+      }
+      .list-placeholder{
+        border: 1px dotted gray;
+        background-color: #E8E4E4;
+        margin: 0 1em 1em 0;
+        height: 50px;
+      }
+      
+      .slider-selection{
+       	background: #337ab7; 
+	}
+	.slider.slider-horizontal{
+		width:100%;
+		
+	}
+	#select{
+		margin-left:15px;
+		width:25%;
+	}
+	/* #sliders{
+		margin-left:30px;
+		width:65%;
+	} */
+	.slider-track-high, .slider-track-low{
+		background-color:lightgray;
+	}
     </style>
 </head>
 
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container" style="margin-left: 20px">
-            <div class="navbar-header">
-                <a class="navbar-brand text-left" style="margin: 0 0 0 0px" href="#">IoT Drag & Drop Project</a>
-            </div>
+      <div class="container" style="margin-left: 20px">
+        <div class="navbar-header">
+          <a class="navbar-brand text-left" style="margin: 0 0 0 0px" href="#">IoT Drag &amp; Drop Project</a>
         </div>
+      </div>
     </nav>
 
     <div class="container-fluid">
-        <div class="row top_margin">
-            <!-- Sensor List -->
-            <div id="div-sensor-list" class="col-md-2" style="border-right: 2px solid lightgray">
-                <h2 class="text-center">Sensor List</h2>
-                <hr style="border-bottom: 1px solid lightgray">
+      <div class="row top_margin">
+        <!-- Sensor List -->
+        <div id="div-sensor-list" class="col-md-2" style="border-right: 2px solid lightgray">
+          <h3 class="text-center">센서 목록</h3>
+          <hr style="border-bottom: 1px solid lightgray">
 
-                <ul id="ul-sensor-list" class="sensor list-unstyled height-set">
-                    <!-- Will be added by php ajax -->
-                </ul>
-            </div>
-
-
-            <div class="col-md-8">
-                <div class="row">
-                    <!-- Selected Sensor -->
-                    <div id="div-selected-sensor" class="col-md-3">
-                        <!-- Title part -->
-                        <h3 class="text-center">Selected sensor</h3>
-                        <hr style="border-bottom: 1px solid lightgray; margin-top: 27px">
-
-                        <ul id="selected-sensor" class="sensor list-unstyled height-set">
-                        </ul>
-
-                    </div>
-                    <div id="div-condition" class="col-md-6">
-                        <!-- Title part -->
-                        <h3 class="text-center">Conditions
-                            <button type="button" class="btn btn-danger" style="float:right" aria-label="Add a Condition">
-                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                </button>
-                        </h3>
-                        <hr style="border-bottom: 1px solid lightgray; margin-top: 27px">
-
-                        <div class="row">
-                            <div class="col-md-4">
-                                <!-- Split button -->
-                                <div class="btn-group">
-                                    <button type="button" id="btn-sensor" class="btn btn-primary">센서</button>
-                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <span class="caret"></span>
-                      <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                                    <ul class="dropdown-menu" id="btn-sensor">
-                                        <li><a href="#">초음파 센서</a></li>
-                                        <li><a href="#">장애물 감지 센서</a></li>
-                                    </ul>
-                                </div>
-
-                                <!-- Split button -->
-                                <div class="btn-group top_margin">
-                                    <button type="button" id="btn-sensor" class="btn btn-primary">액추에이터</button>
-                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <span class="caret"></span>
-                      <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                                    <ul class="dropdown-menu" id="btn-sensor">
-                                        <li><a href="#">초음파 센서</a></li>
-                                        <li><a href="#">장애물 감지 센서</a></li>
-                                    </ul>
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-7">
-                                <div class="input-group">
-                                    <div class="input-group-btn">
-                                        <button type="button" class="btn btn-default">조건</button>
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                      </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">
-                                                    <</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <=</a>
-                                            </li>
-                                            <li><a href="#">=</a></li>
-                                            <li><a href="#">>=</a></li>
-                                            <li><a href="#">></a></li>
-                                        </ul>
-                                    </div>
-
-                                    <input type="text" class="form-control" aria-label="Text input with dropdown button">
-
-
-                                </div>
-
-                                <!-- 나중에 슬라이더로 바꾸기 -->
-                                <div class="input-group top_margin">
-                                    <div class="input-group-btn">
-                                        <button type="button" class="btn btn-default">조건</button>
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                      </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">
-                                                    <</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <=</a>
-                                            </li>
-                                            <li><a href="#">=</a></li>
-                                            <li><a href="#">>=</a></li>
-                                            <li><a href="#">></a></li>
-                                        </ul>
-                                    </div>
-
-                                    <input type="text" class="form-control" aria-label="Text input with dropdown button">
-
-
-                                </div>
-                            </div>
-
-                            <div class="col-md-1">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" style="float:right; margin-top:27px">
-                                        <button type="button" class="btn btn-danger" aria-label="Delete a Condition">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                      </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr>
-
-                        <!-- 같은 row 반복 -->
-                        <div class="row">
-                            <div class="col-md-4">
-                                <!-- Split button -->
-                                <div class="btn-group">
-                                    <button type="button" id="btn-sensor" class="btn btn-primary">센서</button>
-                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <span class="caret"></span>
-                      <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                                    <ul class="dropdown-menu" id="btn-sensor">
-                                        <li><a href="#">초음파 센서</a></li>
-                                        <li><a href="#">장애물 감지 센서</a></li>
-                                    </ul>
-                                </div>
-
-                                <!-- Split button -->
-                                <div class="btn-group top_margin">
-                                    <button type="button" id="btn-sensor" class="btn btn-primary">액추에이터</button>
-                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <span class="caret"></span>
-                      <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                                    <ul class="dropdown-menu" id="btn-sensor">
-                                        <li><a href="#">초음파 센서</a></li>
-                                        <li><a href="#">장애물 감지 센서</a></li>
-                                    </ul>
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-7">
-                                <div class="input-group">
-                                    <div class="input-group-btn">
-                                        <button type="button" class="btn btn-default">조건</button>
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                      </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">
-                                                    <</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <=</a>
-                                            </li>
-                                            <li><a href="#">=</a></li>
-                                            <li><a href="#">>=</a></li>
-                                            <li><a href="#">></a></li>
-                                        </ul>
-                                    </div>
-
-                                    <input type="text" class="form-control" aria-label="Text input with dropdown button">
-
-
-                                </div>
-
-                                <!-- 나중에 슬라이더로 바꾸기 -->
-                                <div class="input-group top_margin">
-                                    <div class="input-group-btn">
-                                        <button type="button" class="btn btn-default">조건</button>
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                      </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">
-                                                    <</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <=</a>
-                                            </li>
-                                            <li><a href="#">=</a></li>
-                                            <li><a href="#">>=</a></li>
-                                            <li><a href="#">></a></li>
-                                        </ul>
-                                    </div>
-
-                                    <input type="text" class="form-control" aria-label="Text input with dropdown button">
-
-
-                                </div>
-                            </div>
-
-                            <div class="col-md-1">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" style="float:right; margin-top:27px">
-                                        <button type="button" class="btn btn-danger" aria-label="Delete a Condition">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                      </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div id="div-selected-actuator" class="col-md-3">
-                        <!-- Title part -->
-                        <h3 class="text-center">Selected Actuator</h3>
-                        <hr style="border-bottom: 1px solid lightgray; margin-top: 27px">
-
-                        <ul id="selected-actuator" class="actuator list-unstyled height-set">
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-
-
-            <div id="div-actuator-list" class="col-md-2" style="border-left: 2px solid lightgray">
-                <!-- Title part -->
-                <h2 class="text-center">Actuator List</h2>
-                <hr style="border: 1px solid lightgray">
-
-                <ul id="ul-act-list" class="actuator list-unstyled height-set">
-                    <!-- Will be added by php ajax -->
-                </ul>
-            </div>
+          <ul id="ul-sensor-list" class="sensor list-unstyled height-set">
+            <!-- Will be added by php ajax -->
+          </ul>
         </div>
 
-        <hr>
 
-        <footer>
-            <p>&copy; Footer</p>
-        </footer>
-    </div>
-    <!-- /container -->
+        <div class="col-md-8">
+          <div class="row">
+            <!-- Selected Sensor -->
+            <div id="div-selected-sensor" class="col-md-3">
+            <!-- Title part -->
+              <h3 class="text-center">센서</h3>
+              <hr style="border-bottom: 1px solid lightgray;">
+
+              <ul id="selected-sensor" class="sensor list-unstyled height-set">
+              <!-- Droppable -->
+              </ul>
+
+            </div>
+            <div id="div-condition" class="col-md-6">
+            <!-- Title part -->
+              <h3 class="text-center">조건</h3>
+              <hr style="border-bottom: 1px solid lightgray;">
+              
+              <!-- 조건 추가 버튼들 -->
+              <div class="btn-group btn-group-justified" role="group" aria-label="add buttons">
+              	<div class="btn-group btn-group-lg" role="group" >
+	              	<button type="button" class="btn btn-default" aria-label="Add Sensor Conditions" 
+	              			value="sensor-add" onclick="condition_btn(this.value)">
+	                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;센서 조건
+	                </button>
+                </div>
+                <div class="btn-group btn-group-lg" role="group">
+	              	<button type="button" class="btn btn-default" aria-label="Add Actuator Conditions"
+	              			value="actuator-add" onclick="condition_btn(this.value)">
+	                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;액추에이터 조건
+	                </button>
+                </div>
+              </div> <!-- div .btn-group-justified -->
+
+				<hr>
+				
+			<!-- 조건부 양식 list  -->			
+			<form id="form-condition" class="form-horizontal" role="form">
+				<div class="row">
+					<select class="col-md-3 form-control" id="select">
+						<option>센서 선택</option>
+						<option>초음파 센서</option>
+						<option>장애물 감지 센서</option>
+						<option>습도 센서</option>						
+					</select>
+					<div hidden class="col-md-8" style="float:right; margin-top:5px;">
+						<input id="single-slider" type="text"
+								data-slider-id='single-slider' 
+								data-slider-min="0" 
+								data-slider-max="4" 
+								data-slider-step="1" 
+								data-slider-value="0"/>
+					</div>
+					<div hidden class="col-md-8" style="float:right; margin-top:5px;">
+						<input id="range-slider" type="text" value=""
+								data-slider-min="0" 
+								data-slider-max="100" 
+								data-slider-step="5" 
+								data-slider-value="[30,70]"/>
+					</div>
+					<div class="col-md-8" style="float:right;">
+						<div class="form-group" style="margin-left:50px;">
+							<label class="radio-inline">
+							  <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> true
+							</label>
+							<label class="radio-inline" style="margin-left:50px;">
+							  <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> false
+							</label>
+						</div>
+					</div>
+				</div>
+				<hr>
+				<!-- row 계속 추가 -->
+			</form>
+              
+
+              <hr>
+              
+              <!-- 빌드/리셋 버튼 -->
+			<div class="btn-group btn-group-justified" role="group" aria-label="build, reset buttons">
+              	<div class="btn-group btn-group-lg" role="group" >
+	              	<button type="button" class="btn btn-success" aria-label="Add Sensor Conditions" >
+	                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;완료
+	                </button>
+                </div>
+                <div class="btn-group btn-group-lg" role="group">
+	              	<button type="button" class="btn btn-danger" aria-label="Add Actuator Conditions">
+	                  <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;초기화
+	                </button>
+                </div>
+              </div> <!-- div .btn-group-justified -->
+
+              
+              <!-- 빌드 후 메세지 -->
+              <div class="alert alert-warning alert-dismissible top_margin" role="alert">
+				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				  <strong>Warning!</strong> Better check yourself, you're not looking too good.
+				</div>
+				
+              
+            </div>
+
+
+            <div id="div-selected-actuator" class="col-md-3">
+            <!-- Title part -->
+              <h3 class="text-center">기기</h3>
+              <hr style="border-bottom: 1px solid lightgray; ">
+
+              <ul id="selected-actuator" class="actuator list-unstyled height-set">
+              </ul>
+            </div>
+
+          </div>
+       </div>
+
+
+        <div id="div-actuator-list" class="col-md-2" style="border-left: 2px solid lightgray">
+        <!-- Title part -->
+          <h3 class="text-center" >기기 목록</h3>
+          <hr style="border: 1px solid lightgray">
+
+          <ul id="ul-act-list" class="actuator list-unstyled height-set">
+            <!-- Will be added by php ajax -->
+          </ul>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+        <p>&copy; Footer</p>
+      </footer>
+    </div> <!-- /container -->
 
     <!-- JavaScript
     ================================================== -->
@@ -427,35 +310,6 @@
                 }
             });
         }, 1000);
-
-        // $(document).ready(function db() { //call DB
-        //     $.post("db.php", {
-        //             table_name: "sensorlist"
-        //         },
-        //         function(sensor, txtStatus, jqXHR) {
-        //             $('#ul-sensor-list').empty();
-        //             if (sensor == "") {
-        //                 $('#ul-sensor-list').append("<p class='text-center'>No Sensor</p>");
-        //             }
-        //             $('#ul-sensor-list').append(sensor);
-        //             sort();
-        //         }).fail(function(jqXHR, txtStatus, errorThrown) {
-        //         alert("Sensor Data Load Failed: " + txtStatus);
-        //     });
-        //     $.post("db.php", {
-        //             table_name: "actuatorlist"
-        //         },
-        //         function(actuator, txtStatus, jqXHR) {
-        //             $('#ul-act-list').empty();
-        //             if (actuator == "") {
-        //                 $('#ul-act-list').append("<p class='text-center'>No Actuator</p>");
-        //             }
-        //             $('#ul-act-list').append(actuator);
-        //             sort();
-        //         }).fail(function(jqXHR, txtStatus, errorThrown) {
-        //         alert("Actuator Data Load Failed: " + txtStatus);
-        //     });
-        // }); //ajax
 
         function sort() { //sortable (drag&drop)
             var $ul_sensor_list = $("#ul-sensor-list");

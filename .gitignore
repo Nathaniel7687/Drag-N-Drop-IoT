@@ -10,3 +10,7 @@
 # Visual Studio 2015 cache/options directory
 .vs/
 
+Server Website/.buildpath
+Server Website/.project
+Server Website/.settings/org.eclipse.wst.common.project.facet.core.xml
+Server Website/.settings/org.eclipse.php.core.prefs
