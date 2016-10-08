@@ -108,7 +108,7 @@
           <h3 class="text-center">센서 목록</h3>
           <hr style="border-bottom: 1px solid lightgray">
 
-          <ul id="ul-sensor-list" class="list-unstyled height-set">
+          <ul id="ul-sensor-list" class="sensorDevices list-unstyled height-set">
             <!-- Will be added by php ajax -->
           </ul>
         </div>
@@ -122,7 +122,7 @@
               <h3 class="text-center">센서</h3>
               <hr style="border-bottom: 1px solid lightgray;">
 
-              <ul id="selected-sensor" class="list-unstyled height-set">
+              <ul id="selected-sensor" class="sensorDevices list-unstyled height-set">
               <!-- Droppable -->
               </ul>
 
@@ -222,7 +222,7 @@
               <h3 class="text-center">기기</h3>
               <hr style="border-bottom: 1px solid lightgray; ">
 
-              <ul id="selected-actuator" class="list-unstyled height-set">
+              <ul id="selected-actuator" class="actuatorDevices list-unstyled height-set">
               </ul>
             </div>
 
@@ -235,7 +235,7 @@
           <h3 class="text-center" >기기 목록</h3>
           <hr style="border: 1px solid lightgray">
 
-          <ul id="ul-act-list" class="list-unstyled height-set">
+          <ul id="ul-act-list" class="actuatorDevices list-unstyled height-set">
             <!-- Will be added by php ajax -->
           </ul>
         </div>
@@ -259,6 +259,9 @@
     <script src="script/ie10-viewport-bug-workaround.js" type="text/javascript"></script>
 
     <script>
+        var sensor_field_name = ["","S_Ultrasonic","S_IR","S_Humidity","S_Temperature","S_Heatindex","S_Light","S_Gas"];
+        var actuator_field_name = ["","A_Fan","A_Servo","A_Buzzer"];
+
         setInterval(function monitor() {
             var sensorList = [];
             var actuatorList = [];
@@ -292,8 +295,8 @@
 
                     $.each(array, function(state, arr){
                         //console.log(state);
-                        if(state == "exist" && arr.length != 0) exist(arr,"sensor");
-                        else if(state == "add" && arr.length != 0) add(arr,"sensor");
+                        if(state == "exist" && arr.length != 0) exist(arr, "sensor");
+                        else if(state == "add" && arr.length != 0) add(arr, "sensor");
                         else if(state == "delete" && arr.length != 0) del(arr);
                         //else alert("state: "+state+" Error: Wrong Value!!");
                     });
@@ -316,8 +319,8 @@
                     // console.log(array);
                     
                     $.each(array, function(state, arr){
-                        if(state == "exist" && arr.length != 0) exist(arr,"actuator");
-                        else if(state == "add" && arr.length != 0) add(arr,"actuator");
+                        if(state == "exist" && arr.length != 0) exist(arr, "actuator");
+                        else if(state == "add" && arr.length != 0) add(arr, "actuator");
                         else if(state == "delete" && arr.length != 0) del(arr);
                         //else alert("Error: Wrong Value!!");
                     });
@@ -337,8 +340,6 @@
             var li_tag_end = ">";
             var h5_tag = "<h5 class='ui-widget-header'>IP: ";
             var table_tag = "</h5><table class='table table-hover table-condensed table-bordered'><tbody>";
-            var sensor_field_name = ["","S_Ultrasonic","S_IR","S_Humidity","S_Temperature","S_Heatindex","S_Light","S_Gas"];
-            var actuator_field_name = ["","A_Fan","A_Servo","A_Buzzer"];
     		var closing_tag = "</tbody></table></li>";
 
             switch(whichList){		//sensor인지 actuator인지 구분
@@ -350,8 +351,8 @@
             		var full_tag = li_tag_start + li_tag_id + li_tag_class + li_tag_end + h5_tag + arr[i].IP + table_tag;         		
                 	for(var j = 1;j < sensor_field_name.length; j++){
                     	if(arr[i][j] !== null) {
-                        	full_tag += "<tr><td>"+sensor_field_name[j]+"</td>";
-                        	full_tag += "<td>"+arr[i][j]+"</td></tr>";
+                        	full_tag += "<tr class=" + sensor_field_name[j] + "><td>" + sensor_field_name[j] + "</td>";
+                        	full_tag += "<td class='data'>" + arr[i][j] + "</td></tr>";
                     	}
                         //console.log(sensor_field_name[j]+": "+arr[i][j]);
 						//full_tag += arr[i][j];
@@ -372,8 +373,8 @@
             		var full_tag = li_tag_start + li_tag_id + li_tag_class + li_tag_end + h5_tag + arr[i].IP + table_tag;         		
                 	for(var j = 1; j < actuator_field_name.length; j++){
                     	if(arr[i][j] !== null) {
-                        	full_tag += "<tr><td>"+actuator_field_name[j]+"</td>";
-                        	full_tag += "<td>"+arr[i][j]+"</td></tr>";
+                        	full_tag += "<tr class=" + actuator_field_name[j] + "><td>" + actuator_field_name[j] + "</td>";
+                        	full_tag += "<td class='data'>" + arr[i][j] + "</td></tr>";
                     	}
                         //console.log(sensor_field_name[j]+": "+arr[i][j]);
 						//full_tag += arr[i][j];
@@ -389,22 +390,37 @@
     			sort();
                 break;
             default: alert("Error at classifying!!");
-            }		
+            }	
         }
 
         function exist(arr, whichList){
         	var length = arr.length;
-            switch(whichList){		//sensor인지 actuator인지 구분
-            case "sensor": 
-            	for(var i=0; i<length; i++){
+            // console.log(arr);
+
+            switch(whichList) {		//sensor인지 actuator인지 구분
+            case "sensor":       
+            	for (var i = 0; i < length; i++) {
+                    var id_tmp = '#' + arr[i]['IP'].split('.').join('\\.');
+                    for (var j = 0; j < sensor_field_name.length; j++) {
+                        if (arr[i][sensor_field_name[j]] != null) {
+                            $(id_tmp + " ." + sensor_field_name[j] + " .data").text(arr[i][sensor_field_name[j]]);
+                        }
+                    }
     			}
+
                 break;
             case "actuator": 
-            	for(var i=0; i<length; i++){
+            	for (var i = 0; i < length; i++) {
+                    var id_tmp = '#' + arr[i]['IP'].split('.').join('\\.');
+                    for (var j = 0; j < actuator_field_name.length; j++) {
+                        if (arr[i][actuator_field_name[j]] != null) {
+                            $(id_tmp + "." + actuator_field_name[j] + ".data").text(arr[i][actuator_field_name[j]]);
+                        }
+                    }
     			}
+
                 break;
-            default: alert("Error at classifying!!");
-            }	
+            }
         }
 
         function del(arr){
@@ -423,12 +439,12 @@
             var $selected_act = $("#selected-actuator");
 
             $("#ul-sensor-list, #selected-sensor").sortable({
-                connectWith: ".sensor",
+                connectWith: ".sensorDevices",
                 placeholder: "list-placeholder ui-corner-all"
             }).disableSelection();
 
             $("#ul-act-list, #selected-actuator").sortable({
-                connectWith: ".actuator",
+                connectWith: ".actuatorDevices",
                 placeholder: "list-placeholder ui-corner-all"
             }).disableSelection();
         }
