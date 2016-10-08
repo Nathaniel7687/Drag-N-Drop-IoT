@@ -261,18 +261,16 @@
     <script>
         setInterval(function monitor() {
             var sensorList = [
-                "3232235521",
-                "3232235525",
-                "3232235636",
-                "3232235736"
-            ]
-
+            	"192.168.0.1",
+                "192.168.0.2",
+                "192.168.0.3",
+                "192.168.0.4"];
             var actuatorList = [
-                "3232235521",
-                "3232235522",
-                "3232235528",
-                "3232235636"
-            ]
+            	"192.168.0.6",
+                "192.168.0.7",
+                "192.168.0.8",
+                "192.168.0.9"
+                ];
 
             $.ajax({
                 type: 'POST',
@@ -283,9 +281,16 @@
                 },
                 datatype: 'json',
                 success: function(result) {
+                    console.log(result);
                     var array = JSON.parse(result);
-                    console.log(array);
-                    // alert(result);
+
+                    $.each(array, function(state, arr){
+                        //console.log(state);
+                        if(state == "exist" && arr.length != 0) exist(arr,"sensor");
+                        else if(state == "add" && arr.length != 0) add(arr,"sensor");
+                        else if(state == "delete" && arr.length != 0) del(arr,"sensor");
+                        //else alert("state: "+state+" Error: Wrong Value!!");
+                    });
                 },
                 error: function(result) {
                     alert('Sensor 항목을 갱신하지 못했습니다.');
@@ -302,14 +307,103 @@
                 datatype: 'json',
                 success: function(result) {
                     var array = JSON.parse(result);
-                    console.log(array);
-                    // alert(result);
+                    
+                    $.each(array, function(state, arr){
+                        if(state == "exist" && arr.length != 0) exist(arr,"actuator");
+                        else if(state == "add" && arr.length != 0) add(arr,"actuator");
+                        else if(state == "delete" && arr.length != 0) del(arr,"actuator");
+                        //else alert("Error: Wrong Value!!");
+                    });
                 },
                 error: function(result) {
                     alert('Actuator 항목을 갱신하지 못했습니다.');
                 }
             });
         }, 1000);
+
+        var li_tag = "<li class='sensor ui-widget-content ui-corner-tr ui-state-default'>";
+        var h5_tag = "<h5 class='ui-widget-header'>IP: ";
+        var table_tag = "</h5><table class='table table-hover table-condensed table-bordered'><tbody>";
+		var sensor_field_name = ["","S_Ultrasonic","S_IR","S_Humidity","S_Temperature","S_Heatindex","S_Light","S_Gas"];
+		var actuator_field_name = ["","A_Fan","A_Servo","A_Buzzer"];
+		var closing_tag = "</tbody></table></li>";
+        
+        function add(arr, whichList){
+        	var length = arr.length;
+            switch(whichList){		//sensor인지 actuator인지 구분
+            case "sensor":                
+            	for(var i=0; i<length; i++){
+            		var full_tag = li_tag + h5_tag + arr[i].IP + table_tag;         		
+                	for(var j=1;j<sensor_field_name.length;j++){
+                    	if(arr[i][j] !== null) {
+                        	full_tag += "<tr><td>"+sensor_field_name[j]+"</td>";
+                        	full_tag += "<td>"+arr[i][j]+"</td></tr>";
+                    	}
+                        	//console.log(sensor_field_name[j]+": "+arr[i][j]);
+						//full_tag += arr[i][j];
+                    }
+                	full_tag += closing_tag;
+        			$('#ul-sensor-list').append(full_tag); 
+        			//console.log("full tag: "+full_tag); 
+    			}
+    			//console.log("break");
+    			
+    			sort();
+                break;
+            case "actuator": 
+            	for(var i=0; i<length; i++){
+            		var full_tag = li_tag + h5_tag + arr[i].IP + table_tag;         		
+                	for(var j=1;j<actuator_field_name.length;j++){
+                    	if(arr[i][j] !== null) {
+                        	full_tag += "<tr><td>"+actuator_field_name[j]+"</td>";
+                        	full_tag += "<td>"+arr[i][j]+"</td></tr>";
+                    	}
+                        	//console.log(sensor_field_name[j]+": "+arr[i][j]);
+						//full_tag += arr[i][j];
+                    }
+                    //console.log("next");
+                	//$('#ul-sensor-list').append(full_tag);  
+                	full_tag += closing_tag;
+        			$('#ul-act-list').append(full_tag); 
+        			//console.log("full tag: "+full_tag); 
+    			}
+    			//console.log("break");
+    			
+    			sort();
+                break;
+            default: alert("Error at classifying!!");
+            }		
+        }
+
+        function exist(arr, whichList){
+        	var length = arr.length;
+            switch(whichList){		//sensor인지 actuator인지 구분
+            case "sensor": 
+            	for(var i=0; i<length; i++){
+    			}
+                break;
+            case "actuator": 
+            	for(var i=0; i<length; i++){
+    			}
+                break;
+            default: alert("Error at classifying!!");
+            }	
+        }
+
+        function del(arr, whichList){
+        	var length = arr.length;
+            switch(whichList){		//sensor인지 actuator인지 구분
+            case "sensor": 
+            	for(var i=0; i<length; i++){
+    			}
+                break;
+            case "actuator": 
+            	for(var i=0; i<length; i++){
+    			}
+                break;
+            default: alert("Error at classifying!!");
+            }	
+        }
 
         function sort() { //sortable (drag&drop)
             var $ul_sensor_list = $("#ul-sensor-list");

@@ -3,6 +3,7 @@ include_once("db_connect.php");
 
 $sql;
 $device = $_POST['Init'];
+$clientDevice = array();
 if ($device == 'sensor'){
     $sql = 'SELECT  IP,
                     S_Ultrasonic,
@@ -14,7 +15,10 @@ if ($device == 'sensor'){
                     S_Gas
             FROM    SensorList
             ORDER BY IP ASC';
-    $clientDevice = json_decode(stripslashes($_POST['Sensors']));
+    $tmp = json_decode(stripslashes($_POST['Sensors']));
+    for($i = 0;$i<count($tmp);$i++){
+    	array_push($clientDevice, ip2long($tmp[$i]));
+    }    
 }
 else if ($device == 'actuator') {
     $sql = 'SELECT  IP,
@@ -23,7 +27,10 @@ else if ($device == 'actuator') {
                     A_Buzzer
             FROM    ActuatorList
             ORDER BY IP ASC';
-    $clientDevice = json_decode(stripslashes($_POST['Actuators']));
+    $tmp = json_decode(stripslashes($_POST['Actuators']));
+    for($i = 0;$i<count($tmp);$i++){
+    	array_push($clientDevice, ip2long($tmp[$i]));
+    }
 }
 
 $q_result = mysqli_query($conn, $sql);
