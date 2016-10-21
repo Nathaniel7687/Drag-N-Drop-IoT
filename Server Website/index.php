@@ -12,6 +12,7 @@
     <!-- Bootstrap core CSS -->
     <link href="style/bootstrap.min.css" rel="stylesheet">
     <link href="style/jquery-ui.css" rel="stylesheet">
+    <link href="style/bootstrap-slider.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="style/ie10-viewport-bug-workaround.css" rel="stylesheet">
@@ -88,6 +89,10 @@
 	.slider-track-high, .slider-track-low{
 		background-color:lightgray;
 	}
+	.form-control{
+		width: 25%;
+		margin-left:15px;
+	}
     </style>
 </head>
 
@@ -122,7 +127,7 @@
               <h3 class="text-center">센서</h3>
               <hr style="border-bottom: 1px solid lightgray;">
 
-              <ul id="selected-sensor" class="sensorDevices list-unstyled height-set">
+              <ul id="selected-sensor" class="sensorDevices selected list-unstyled height-set ">
               <!-- Droppable -->
               </ul>
 
@@ -136,13 +141,13 @@
               <div class="btn-group btn-group-justified" role="group" aria-label="add buttons">
               	<div class="btn-group btn-group-lg" role="group" >
 	              	<button type="button" class="btn btn-default" aria-label="Add Sensor Conditions" 
-	              			value="sensor-add" onclick="condition_btn(this.value)">
+	              			value="sensor-add" onclick="btn_action('sensor')">
 	                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;센서 조건
 	                </button>
                 </div>
                 <div class="btn-group btn-group-lg" role="group">
 	              	<button type="button" class="btn btn-default" aria-label="Add Actuator Conditions"
-	              			value="actuator-add" onclick="condition_btn(this.value)">
+	              			value="actuator-add" onclick="btn_action('actuator')">
 	                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;액추에이터 조건
 	                </button>
                 </div>
@@ -151,41 +156,7 @@
 				<hr>
 				
 			<!-- 조건부 양식 list  -->			
-			<form id="form-condition" class="form-horizontal" role="form">
-				<div class="row">
-					<select class="col-md-3 form-control" id="select">
-						<option>센서 선택</option>
-						<option>초음파 센서</option>
-						<option>장애물 감지 센서</option>
-						<option>습도 센서</option>						
-					</select>
-					<div hidden class="col-md-8" style="float:right; margin-top:5px;">
-						<input id="single-slider" type="text"
-								data-slider-id='single-slider' 
-								data-slider-min="0" 
-								data-slider-max="4" 
-								data-slider-step="1" 
-								data-slider-value="0"/>
-					</div>
-					<div hidden class="col-md-8" style="float:right; margin-top:5px;">
-						<input id="range-slider" type="text" value=""
-								data-slider-min="0" 
-								data-slider-max="100" 
-								data-slider-step="5" 
-								data-slider-value="[30,70]"/>
-					</div>
-					<div class="col-md-8" style="float:right;">
-						<div class="form-group" style="margin-left:50px;">
-							<label class="radio-inline">
-							  <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> true
-							</label>
-							<label class="radio-inline" style="margin-left:50px;">
-							  <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> false
-							</label>
-						</div>
-					</div>
-				</div>
-				<hr>
+			<form id="form-condition" class="form-horizontal" role="form">				
 				<!-- row 계속 추가 -->
 			</form>
               
@@ -195,12 +166,14 @@
               <!-- 빌드/리셋 버튼 -->
 			<div class="btn-group btn-group-justified" role="group" aria-label="build, reset buttons">
               	<div class="btn-group btn-group-lg" role="group" >
-	              	<button type="button" class="btn btn-success" aria-label="Add Sensor Conditions" >
+	              	<button type="button" class="btn btn-success" aria-label="Add Sensor Conditions" 
+	              			onclick="btn_action('build')">
 	                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;완료
 	                </button>
                 </div>
                 <div class="btn-group btn-group-lg" role="group">
-	              	<button type="button" class="btn btn-danger" aria-label="Add Actuator Conditions">
+	              	<button type="button" class="btn btn-danger" aria-label="Add Actuator Conditions"
+	              			onclick="btn_action('reset')">
 	                  <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;초기화
 	                </button>
                 </div>
@@ -208,7 +181,7 @@
 
               
               <!-- 빌드 후 메세지 -->
-              <div class="alert alert-warning alert-dismissible top_margin" role="alert">
+              <div hidden class="alert alert-warning alert-dismissible top_margin" role="alert">
 				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				  <strong>Warning!</strong> Better check yourself, you're not looking too good.
 				</div>
@@ -222,7 +195,7 @@
               <h3 class="text-center">기기</h3>
               <hr style="border-bottom: 1px solid lightgray; ">
 
-              <ul id="selected-actuator" class="actuatorDevices list-unstyled height-set">
+              <ul id="selected-actuator" class="actuatorDevices selected list-unstyled height-set">
               </ul>
             </div>
 
@@ -254,14 +227,49 @@
     <script src="script/jquery-1.12.4.js" type="text/javascript"></script>
     <script src="script/bootstrap.min.js" type="text/javascript"></script>
     <script src="script/jquery-ui.js" type="text/javascript"></script>
+    <script src="script/bootstrap-slider.min.js" type="text/javascript"></script>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="script/ie10-viewport-bug-workaround.js" type="text/javascript"></script>
 
+	<script>
+	 	// With JQuery
+	    $('#single-slider').bootstrapSlider({
+	    	formatter: function(value) {
+	    		return '레벨: ' + value;
+	    	}
+	    });
+	    $("#range-slider").bootstrapSlider({});
+    </script>
     <script>
         var sensor_field_name = ["","S_Ultrasonic","S_IR","S_Humidity","S_Temperature","S_Heatindex","S_Light","S_Gas"];
         var actuator_field_name = ["","A_Fan","A_Servo","A_Buzzer"];
+        var frm_sensor_dd_tag = "<select class='col-md-3 form-control' id='dropdown_sensor'>";	//sensor dropdown select form tag
+        var frm_act_dd_tag = "<select class='col-md-3 form-control' id='dropdown_act'>";	//actuator dropdown select form tag
 
+        //버튼 클릭 이벤트
+        function btn_action(whichDevice){
+            switch(whichDevice){
+            case 'sensor': 
+                var noOfSelectedSensor = $('.selected >.sensor').length;
+                if(noOfSelectedSensor == 0) alert("센서를 먼저 선택해 주세요!"); 	//선택한 센서 없을 때 알림
+                else{
+                }
+                break;
+            case 'actuator': 
+            	var noOfSelectedAct = $('.selected >.actuator').length;
+                if(noOfSelectedAct == 0) alert("액추에이터를 먼저 선택해 주세요!");	//선택한 액추에이터 없을 때 알림
+                else{
+                }
+                break;
+            case 'build':
+                break;
+            case 'reset':
+                break;
+            }
+        }
+
+        //List monitoring
         setInterval(function monitor() {
             var sensorList = [];
             var actuatorList = [];
@@ -278,8 +286,8 @@
                 }
             );
 
-            // console.log(sensorList);
-            // console.log(actuatorList);
+//             console.log("Existing Sensor: "+sensorList);
+//             console.log("Existing Actuator: "+actuatorList);
 
             $.ajax({
                 type: 'POST',
@@ -289,12 +297,14 @@
                     Sensors: JSON.stringify(sensorList)
                 },
                 datatype: 'json',
+                async: false,
                 success: function(result) {
                     var array = JSON.parse(result);
-                    // console.log(array);
+                    //console.log("*****sensor result: ");
+                    //console.log(array);
 
                     $.each(array, function(state, arr){
-                        //console.log(state);
+                        //console.log("state: "+state);
                         if(state == "exist" && arr.length != 0) exist(arr, "sensor");
                         else if(state == "add" && arr.length != 0) add(arr, "sensor");
                         else if(state == "delete" && arr.length != 0) del(arr);
@@ -314,9 +324,11 @@
                     Actuators: JSON.stringify(actuatorList)
                 },
                 datatype: 'json',
+                async: false,
                 success: function(result) {
                     var array = JSON.parse(result);
-                    // console.log(array);
+                    //console.log("*****actuator result: ");
+                    //console.log(array);
                     
                     $.each(array, function(state, arr){
                         if(state == "exist" && arr.length != 0) exist(arr, "actuator");
@@ -332,6 +344,7 @@
         }, 1000);
         
         function add(arr, whichList){
+        	//console.log(whichList+" add: "+arr);
         	var length = arr.length;
 
             var li_tag_start = "<li ";
@@ -355,7 +368,6 @@
                         	full_tag += "<td class='data'>" + arr[i][j] + "</td></tr>";
                     	}
                         //console.log(sensor_field_name[j]+": "+arr[i][j]);
-						//full_tag += arr[i][j];
                     }
                 	full_tag += closing_tag;
         			$('#ul-sensor-list').append(full_tag); 
@@ -394,6 +406,7 @@
         }
 
         function exist(arr, whichList){
+        	//console.log(whichList+" exist : "+arr);
         	var length = arr.length;
             // console.log(arr);
 
@@ -425,7 +438,7 @@
 
         function del(arr){
         	var length = arr.length;
-            // console.log(arr);
+            //console.log("del: "+arr);
             
             for(var i = 0; i < length; i++) {
                 $('#' + arr[i].split('.').join('\\.')).remove();    
@@ -437,16 +450,39 @@
             var $ul_act_list = $("#ul-act-list");
             var $selected_sensor = $("#selected-sensor");
             var $selected_act = $("#selected-actuator");
+            var flag = 0;
 
-            $("#ul-sensor-list, #selected-sensor").sortable({
+            $(".sensorDevices").sortable({
                 connectWith: ".sensorDevices",
-                placeholder: "list-placeholder ui-corner-all"
+                placeholder: "list-placeholder ui-corner-all",
+            	scroll: false,
+            	revert: 200
             }).disableSelection();
 
-            $("#ul-act-list, #selected-actuator").sortable({
+            $(".actuatorDevices").sortable({
                 connectWith: ".actuatorDevices",
-                placeholder: "list-placeholder ui-corner-all"
+                placeholder: "list-placeholder ui-corner-all",
+                scroll: false,
+                revert: 200
             }).disableSelection();
+
+            $selected_sensor.on("sortreceive", function( event, ui){
+				var $list = $(this);
+
+				if($list.children().length > 1){
+					$(ui.sender).sortable('cancel');
+					alert("한 개의 센서만 선택해주세요!");
+				}
+            });
+
+            $selected_act.on("sortreceive", function( event, ui){
+				var $list = $(this);
+
+				if($list.children().length > 1){
+					$(ui.sender).sortable('cancel');
+					alert("한 개의 액추에이터만 선택해주세요!");
+				}
+            });            
         }
     </script>
 </body>

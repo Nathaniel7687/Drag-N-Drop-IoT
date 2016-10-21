@@ -1,5 +1,8 @@
 <?php
 include_once("db_connect.php");
+require_once('lib/FirePHPCore/FirePHP.class.php');
+
+$firephp = FirePHP::getInstance(true);
 
 $sql;
 $device = $_POST['Init'];
@@ -17,8 +20,11 @@ if ($device == 'sensor'){
             ORDER BY IP ASC';
 
     $tmp = json_decode(stripslashes($_POST['Sensors']));
+    //$firephp->info($tmp, 'Sensors');
     for($i = 0; $i < count($tmp); $i++){
+    	//$ip2longVal = sprintf('%u',ip2long($tmp[$i]));	//ip2long할 경우 negative로 출력되므로 sprintf사용
     	array_push($clientDevice, ip2long($tmp[$i]));
+    	//$firephp->info($clientDevice, 'Sensors');
     }
 }
 else if ($device == 'actuator') {
@@ -31,7 +37,9 @@ else if ($device == 'actuator') {
             
     $tmp = json_decode(stripslashes($_POST['Actuators']));
     for($i = 0; $i < count($tmp); $i++){
+    	//$ip2longVal = sprintf('%u',ip2long($tmp[$i]));	//ip2long할 경우 negative로 출력되므로 sprintf사용
     	array_push($clientDevice, ip2long($tmp[$i]));
+    	//$firephp->info($clientDevice, 'Actuator');
     }
 }
 
