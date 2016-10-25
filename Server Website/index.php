@@ -82,16 +82,21 @@
 		margin-left:15px;
 		width:25%;
 	}
-	/* #sliders{
-		margin-left:30px;
-		width:65%;
-	} */
+	#form-condition{
+		margin-bottom:15px;
+	}
 	.slider-track-high, .slider-track-low{
 		background-color:lightgray;
 	}
 	.form-control{
 		width: 25%;
 		margin-left:15px;
+	}
+	.cond{
+		margin-bottom:15px;
+	}
+	option, select{
+		text-align:center;
 	}
     </style>
 </head>
@@ -148,23 +153,22 @@
                 <div class="btn-group btn-group-lg" role="group">
 	              	<button type="button" class="btn btn-default" aria-label="Add Actuator Conditions"
 	              			value="actuator-add" onclick="btn_action('actuator')">
-	                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;액추에이터 조건
+	                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;기기 조건
 	                </button>
                 </div>
               </div> <!-- div .btn-group-justified -->
 
-				<hr>
+			<hr>
 				
 			<!-- 조건부 양식 list  -->			
-			<form id="form-condition" class="form-horizontal" role="form">				
-				<!-- row 계속 추가 -->
+			<form id="form-condition" class="form-horizontal" role="form">		
+			
 			</form>
               
-
-              <hr>
+			
               
               <!-- 빌드/리셋 버튼 -->
-			<div class="btn-group btn-group-justified" role="group" aria-label="build, reset buttons">
+			<div class="btn-group btn-group-justified" role="group" aria-label="build, reset buttons" style="margin-top:30px;">
               	<div class="btn-group btn-group-lg" role="group" >
 	              	<button type="button" class="btn btn-success" aria-label="Add Sensor Conditions" 
 	              			onclick="btn_action('build')">
@@ -172,7 +176,7 @@
 	                </button>
                 </div>
                 <div class="btn-group btn-group-lg" role="group">
-	              	<button type="button" class="btn btn-danger" aria-label="Add Actuator Conditions"
+	              	<button type="button reset" class="btn btn-danger" aria-label="Add Actuator Conditions"
 	              			onclick="btn_action('reset')">
 	                  <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;초기화
 	                </button>
@@ -232,39 +236,206 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="script/ie10-viewport-bug-workaround.js" type="text/javascript"></script>
 
+	<!-- bootstrap slider -->
 	<script>
 	 	// With JQuery
-	    $('#single-slider').bootstrapSlider({
-	    	formatter: function(value) {
-	    		return '레벨: ' + value;
-	    	}
-	    });
-	    $("#range-slider").bootstrapSlider({});
+	 	function slider_setting(show_child){
+		 	if(show_child == "single"){
+		 		$('#single-slider').bootstrapSlider({
+		 			id: "single-slider",
+			    	min:0,
+			    	max:4,
+			    	step:1,
+			    	value:0,
+			    	formatter: function(value) {				    	
+			    		return '레벨: ' + value;
+			    	}
+			    });
+			 }
+		 	else { 
+			 	console.info("range-slider: "+show_child);
+			 	$('#'+show_child+' > #range_slider > #range-slider').bootstrapSlider({
+					id: show_child+"-slider",
+					min: 0,
+					max: 100,
+					range: true,
+					step: 5,
+					value: [0,30]					
+				 }); 
+			 }
+	 	}
     </script>
+    
+    
     <script>
         var sensor_field_name = ["","S_Ultrasonic","S_IR","S_Humidity","S_Temperature","S_Heatindex","S_Light","S_Gas"];
         var actuator_field_name = ["","A_Fan","A_Servo","A_Buzzer"];
-        var frm_sensor_dd_tag = "<select class='col-md-3 form-control' id='dropdown_sensor'>";	//sensor dropdown select form tag
-        var frm_act_dd_tag = "<select class='col-md-3 form-control' id='dropdown_act'>";	//actuator dropdown select form tag
+		var single_slider = "<div class='col-md-8' id='single_slider' style='float:right; margin-top:5px; display:none'>"
+							+"<input id='single-slider' type='text'/>"
+							+"</div>";
+		var range_slider = "<div class='conds col-md-8' id='range_slider' style='float:right; margin-top:5px; display:none'>"
+							+"<input id='range-slider' type='text'/>"
+							+"</div>";
+		var radio_form = "<div class='conds col-md-8' id='radio_form' style='float:right; display:none'>"
+						+"<label class='radio-inline' style='margin-left:50px;'> <input type='radio' name='inlineRadioOptions' id='inlineRadio1' value='option1'> true </label>"
+						+"<label class='radio-inline' style='margin-left:50px;'> <input type='radio' name='inlineRadioOptions' id='inlineRadio2' value='option2'> false </label>"
+						+"</div></div>";
+		var sensor_cond_cnt = 0;
+        var act_cond_cnt = 0;
 
+        function switch_names(name){
+            var switched = "";
+            switch(name){
+            case "S_Ultrasonic": switched = "초음파센서"; break;
+            case "S_IR": switched = "장애물센서"; break;
+            case "S_Humidity": switched = "습도센서"; break;
+            case "S_Temperature": switched = "온도센서"; break;
+            case "S_Heatindex": switched = "열센서"; break;
+            case "S_Light": switched = "조도센서"; break;
+            case "S_Gas": switched = "가스센서"; break;
+            case "A_Fan": switched = "팬"; break;
+            case "A_Servo": switched = "서보모터"; break;
+            case "A_Buzzer": switched = "부저"; break;
+            }
+            return switched;
+        }
+
+//         $('select').change(function(){
+//             $(this)
+//             	.siblings('select')
+//             	.children('option[value='+this.value+']')
+//             	.attr('disabled',true)
+//             	.siblings().removeAttr('disabled');
+//         });
+
+        //select box 값 선택될 때마다 출력
+        function select_box(option,id){  
+        	id = '#'+id;         
+            var data_s_num = $(id).attr('data-sensor-num');
+			console.log("id: "+option);
+			console.log("data-sensor-num: "+data_s_num);
+
+			if( data_s_num > 0 ){
+				for(var i=0;i<data_s_num;i++){
+					var box_id = '#dropdown_sensor_'+i;
+					var value = $(box_id+' option:selected').val();
+					console.log("selected: "+value);
+					var select_tags = $('select');
+					select_tags.children('option[value='+value+']').attr('disabled',true);
+				}
+			}			
+
+			var show_sensor_num = "sensor-cond-"+data_s_num;
+			var hide_child = $('#'+show_sensor_num+' > .conds');
+			console.info("hide: "+hide_child.selector);
+			hide_child.hide();  
+			var show_child;
+            
+        	switch(option){
+            case "S_IR": 
+				show_child = $('#'+show_sensor_num+' > #radio_form');
+				show_child.show();
+                break;
+            case "A_Fan": 
+            case "A_Servo": 
+            case "A_Buzzer": $('#single_slider').show(); slider_setting("single"); break;
+            case "init": break;
+            default: 
+            	show_child = $('#'+show_sensor_num+' > #range_slider');
+        		console.info("show: "+show_child.selector);
+	            show_child.show();
+	            slider_setting(show_sensor_num);
+            }
+        }
+
+//         $('#dropdown_sensor').change(function(){
+//             $('#dropdown_sensor option:selected').each(function(){
+//             	console.log("changed");
+//             });            
+//         }).change();
+        
+        
         //버튼 클릭 이벤트
         function btn_action(whichDevice){
+            var form_id = document.getElementById("form-condition");      
+            
             switch(whichDevice){
             case 'sensor': 
+            	var frm_sensor_dd_tag = "<select class='col-md-3 form-control' id="+"dropdown_sensor_"+sensor_cond_cnt
+                			+" data-sensor-num="
+                			+sensor_cond_cnt+" onchange='select_box(this.value, this.id)'>"
+                			+"<option selected='selected' value='init'>센서 선택</option>";	//sensor dropdown select form tag
                 var noOfSelectedSensor = $('.selected >.sensor').length;
                 if(noOfSelectedSensor == 0) alert("센서를 먼저 선택해 주세요!"); 	//선택한 센서 없을 때 알림
-                else{
+                else{	//있으면                	
+					//select 태그에 들어갈 센서들 가져오기
+					var selected_s = document.getElementById('selected-sensor').getElementsByTagName('tr');
+					if(sensor_cond_cnt == selected_s.length) {
+						alert("센서 조건은 센서당 하나씩만 설정해주세요!");
+						break;
+					}
+	                
+					for(var i=0;i<selected_s.length;i++){
+						var kor_s_name = switch_names(selected_s[i].className);
+						frm_sensor_dd_tag+="<option value='"+selected_s[i].className+"'>"+kor_s_name+"</option>";
+					}
+					frm_sensor_dd_tag+="</select>";
+
+					var sensor_cond_tag = frm_sensor_dd_tag+range_slider+radio_form;
+					
+                    var add_sensor_row = document.createElement("div"); //div 생성
+                    add_sensor_row.id = "sensor-cond-"+sensor_cond_cnt;
+                    add_sensor_row.className = "row cond";
+                    add_sensor_row.setAttribute('data-sensor-num',sensor_cond_cnt);
+                    add_sensor_row.innerHTML = sensor_cond_tag;
+                    var conds = add_sensor_row.getElementsByClassName('conds');
+                    for(var i=0;i<conds.length;i++){
+                        conds[i].setAttribute('data-sensor-num',sensor_cond_cnt);
+                    }
+                    form_id.appendChild(add_sensor_row);
+
+                    select_box("init","dropdown_sensor_"+sensor_cond_cnt);
+
+                    sensor_cond_cnt++;
                 }
                 break;
             case 'actuator': 
+            	var frm_act_dd_tag = "<select class='col-md-3 form-control' id='dropdown_act'>";	//actuator dropdown select form tag
             	var noOfSelectedAct = $('.selected >.actuator').length;
-                if(noOfSelectedAct == 0) alert("액추에이터를 먼저 선택해 주세요!");	//선택한 액추에이터 없을 때 알림
-                else{
+                if(noOfSelectedAct == 0) alert("기기를 먼저 선택해 주세요!");	//선택한 기기 없을 때 알림
+                else{	//있으면
+                	//select 태그에 들어갈 센서들 가져오기
+					var selected_a = document.getElementById('selected-actuator').getElementsByTagName('tr');
+					if(act_cond_cnt == selected_a.length) {
+						alert("기기 조건은 하나만 설정해주세요!");
+						break;
+					}
+                
+					for(var i=0;i<selected_a.length;i++){
+						var kor_a_name = switch_names(selected_a[i].className);
+						frm_act_dd_tag+="<option value='"+selected_a[i].className+"' selected='selected'>"+kor_a_name+"</option>";
+					}
+					frm_act_dd_tag+="</select>";
+
+					var act_cond_tag = frm_act_dd_tag+single_slider+"</div>";
+					
+                    var add_act_row = document.createElement("div"); //div 생성
+                    add_act_row.id = "act-cond-"+act_cond_cnt;
+                    add_act_row.className = "row cond";
+                    add_act_row.innerHTML = act_cond_tag;
+                    form_id.appendChild(add_act_row);
+
+                    select_box($('#dropdown_act option:selected').val(),"");
+
+                    act_cond_cnt++;                    
                 }
                 break;
             case 'build':
                 break;
-            case 'reset':
+            case 'reset':	//조건 리스트 모두 삭제
+            	$("#form-condition").empty();
+            	act_cond_cnt = 0;
+            	sensor_cond_cnt = 0;
                 break;
             }
         }
@@ -286,9 +457,6 @@
                 }
             );
 
-//             console.log("Existing Sensor: "+sensorList);
-//             console.log("Existing Actuator: "+actuatorList);
-
             $.ajax({
                 type: 'POST',
                 url: 'monitor.php',
@@ -300,15 +468,11 @@
                 async: false,
                 success: function(result) {
                     var array = JSON.parse(result);
-                    //console.log("*****sensor result: ");
-                    //console.log(array);
 
                     $.each(array, function(state, arr){
-                        //console.log("state: "+state);
                         if(state == "exist" && arr.length != 0) exist(arr, "sensor");
                         else if(state == "add" && arr.length != 0) add(arr, "sensor");
                         else if(state == "delete" && arr.length != 0) del(arr);
-                        //else alert("state: "+state+" Error: Wrong Value!!");
                     });
                 },
                 error: function(result) {
@@ -327,14 +491,11 @@
                 async: false,
                 success: function(result) {
                     var array = JSON.parse(result);
-                    //console.log("*****actuator result: ");
-                    //console.log(array);
                     
                     $.each(array, function(state, arr){
                         if(state == "exist" && arr.length != 0) exist(arr, "actuator");
                         else if(state == "add" && arr.length != 0) add(arr, "actuator");
                         else if(state == "delete" && arr.length != 0) del(arr);
-                        //else alert("Error: Wrong Value!!");
                     });
                 },
                 error: function(result) {
@@ -344,7 +505,6 @@
         }, 1000);
         
         function add(arr, whichList){
-        	//console.log(whichList+" add: "+arr);
         	var length = arr.length;
 
             var li_tag_start = "<li ";
@@ -364,16 +524,13 @@
             		var full_tag = li_tag_start + li_tag_id + li_tag_class + li_tag_end + h5_tag + arr[i].IP + table_tag;         		
                 	for(var j = 1;j < sensor_field_name.length; j++){
                     	if(arr[i][j] !== null) {
-                        	full_tag += "<tr class=" + sensor_field_name[j] + "><td>" + sensor_field_name[j] + "</td>";
+                        	full_tag += "<tr class=" + sensor_field_name[j] + "><td>" + switch_names(sensor_field_name[j]) + "</td>";
                         	full_tag += "<td class='data'>" + arr[i][j] + "</td></tr>";
                     	}
-                        //console.log(sensor_field_name[j]+": "+arr[i][j]);
                     }
                 	full_tag += closing_tag;
         			$('#ul-sensor-list').append(full_tag); 
-        			//console.log("full tag: "+full_tag); 
     			}
-    			//console.log("break");
     			
     			sort();
                 break;
@@ -385,19 +542,13 @@
             		var full_tag = li_tag_start + li_tag_id + li_tag_class + li_tag_end + h5_tag + arr[i].IP + table_tag;         		
                 	for(var j = 1; j < actuator_field_name.length; j++){
                     	if(arr[i][j] !== null) {
-                        	full_tag += "<tr class=" + actuator_field_name[j] + "><td>" + actuator_field_name[j] + "</td>";
+                        	full_tag += "<tr class=" + actuator_field_name[j] + "><td>" + switch_names(actuator_field_name[j]) + "</td>";
                         	full_tag += "<td class='data'>" + arr[i][j] + "</td></tr>";
                     	}
-                        //console.log(sensor_field_name[j]+": "+arr[i][j]);
-						//full_tag += arr[i][j];
-                    }
-                    //console.log("next");
-                	//$('#ul-sensor-list').append(full_tag);  
+                    } 
                 	full_tag += closing_tag;
         			$('#ul-act-list').append(full_tag); 
-        			//console.log("full tag: "+full_tag); 
     			}
-    			//console.log("break");
     			
     			sort();
                 break;
@@ -406,9 +557,7 @@
         }
 
         function exist(arr, whichList){
-        	//console.log(whichList+" exist : "+arr);
         	var length = arr.length;
-            // console.log(arr);
 
             switch(whichList) {		//sensor인지 actuator인지 구분
             case "sensor":       
@@ -438,7 +587,6 @@
 
         function del(arr){
         	var length = arr.length;
-            //console.log("del: "+arr);
             
             for(var i = 0; i < length; i++) {
                 $('#' + arr[i].split('.').join('\\.')).remove();    
@@ -480,7 +628,7 @@
 
 				if($list.children().length > 1){
 					$(ui.sender).sortable('cancel');
-					alert("한 개의 액추에이터만 선택해주세요!");
+					alert("한 개의 기기만 선택해주세요!");
 				}
             });            
         }
