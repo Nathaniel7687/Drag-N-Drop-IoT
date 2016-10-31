@@ -236,9 +236,12 @@
 
 	<!-- bootstrap slider -->
 	<script>
-		// With JQuery
-		function slider_setting(show_child) {
-			if (show_child == "single") {
+		var range_slider_ids = [];
+		
+		
+		function slider_setting(num, opt) {
+			//console.info("slider setting");
+			if (opt == "single") {
 				$('#single-slider').bootstrapSlider({
 					formatter: function(value) {
 						return '레벨: ' + value;
@@ -250,17 +253,56 @@
 					value: 0
 				});
 			} else {
-				console.info("range-slider: " + show_child);
-				$('#' + show_child + ' > #range_slider > #range-slider').bootstrapSlider({
-					id: show_child + "-slider",
-					max: 100,
-					min: 0,
+				var slider_id = num+"-"+opt + "-slider";
+				var empty=[];
+				var min, max, range, step;
+
+				if(opt.match("S_Ultrasonic")){ min=2; max=400; range="["+min+", 30]"; step=1;}
+				else if(opt.match("S_Humidity")){ min=20; max=90; range="["+min+", 45]"; step=5;}
+				else if(opt.match("S_Temperature")){ min=0; max=50; range="["+min+", 20]"; step=1;}
+				else if(opt.match("S_Light")){ min=0; max=1000; range="["+min+", 50]"; step=10;}
+				else if(opt.match("S_Gas")){ min=300; max=10000; range="["+min+", 350]"; step=10;}
+
+				if($.inArray(slider_id, range_slider_ids) === -1) {	//중복 값이 없을 경우		
+					for(var i=0;i<range_slider_ids.length;i++){
+						if(range_slider_ids[i].match(num)){ //같은 select box에서 선택된 경우 새로 선택된 걸로 replace
+							//console.log("match value: "+range_slider_ids[i]);
+							console.log("id변경 from "+range_slider_ids[i]+" to "+slider_id);
+							$('#'+range_slider_ids[i]).attr("id",slider_id);
+							$('#sensor-cond-'+num+' > #range_slider > #range-slider').bootstrapSlider("setAttribute","min",min);
+							$('#sensor-cond-'+num+' > #range_slider > #range-slider').bootstrapSlider("setAttribute","max",max);
+							$('#sensor-cond-'+num+' > #range_slider > #range-slider').bootstrapSlider("setAttribute","step",step);
+							$('#sensor-cond-'+num+' > #range_slider > #range-slider').bootstrapSlider("setValue",[min, min+20]);
+							//slider.refresh();
+							range_slider_ids.pop(range_slider_ids[i]);
+						}
+					}
+					//console.log("push : "+slider_id);
+					range_slider_ids.push(slider_id); 
+
+					//console.log("range slider push: ");
+					//console.info(range_slider_ids.join(','));
+				}
+
+				
+				
+				$('#sensor-cond-' + num + ' > #range_slider > #range-slider').bootstrapSlider({
+					id: slider_id,
+					max: max,
+					min: min,
 					range: true,
-					step: 5,
-					value: [0, 30]
+					tooltip:'always',
+					step: step,
+					value: [min, min+20]
 				});
 			}
 		}
+
+		// Slider Event
+		$('#single-slider').on("slide", function(e){
+			var act_value = e.value;
+			//console.info("single slider value: "+act_value);
+		});
 	</script>
 
 	<script>
@@ -275,7 +317,7 @@
 			"S_Gas"
 		];
 		var actuator_field_name = ["", "A_Fan", "A_Servo", "A_Buzzer"];
-		var single_slider = "<div class='col-md-8' id='single_slider' style='float:right; margin-top:5px; dis" +
+		var single_slider = "<div class='col-md-8' id='single_slider' style='float:right;v  margin-top:5px; dis" +
 			"play:none'><input id='single-slider' type='text'/></div>";
 		var range_slider = "<div class='conds col-md-8' id='range_slider' style='float:right; margin-top:5px" +
 			"; display:none'><input id='range-slider' type='text'/></div>";
@@ -310,16 +352,14 @@
 		// }); select box 값 선택될 때마다 출력
 
 		function select_box(option, id) {
+			console.info("changed");
 			id = '#' + id;
 			var data_s_num = $(id).attr('data-sensor-num');
-			console.log("id: " + option);
-			console.log("data-sensor-num: " + data_s_num);
 
 			if (data_s_num > 0) {
 				for (var i = 0; i < data_s_num; i++) {
 					var box_id = '#dropdown_sensor_' + i;
 					var value = $(box_id + ' option:selected').val();
-					console.log("selected: " + value);
 					var select_tags = $('select');
 					select_tags
 						.children('option[value=' + value + ']')
@@ -329,7 +369,6 @@
 
 			var show_sensor_num = "sensor-cond-" + data_s_num;
 			var hide_child = $('#' + show_sensor_num + ' > .conds');
-			console.info("hide: " + hide_child.selector);
 			hide_child.hide();
 			var show_child;
 
@@ -342,15 +381,14 @@
 				case "A_Servo":
 				case "A_Buzzer":
 					$('#single_slider').show();
-					slider_setting("single");
+					slider_setting(0,"single");
 					break;
 				case "init":
 					break;
 				default:
 					show_child = $('#' + show_sensor_num + ' > #range_slider');
-					console.info("show: " + show_child.selector);
 					show_child.show();
-					slider_setting(show_sensor_num);
+					slider_setting(data_s_num,option);
 			}
 		}
 
@@ -365,7 +403,7 @@
 					//sensor dropdown select form tag
 					var frm_sensor_dd_tag = "<select class='col-md-3 form-control' id=dropdown_sensor_" + sensor_cond_cnt +
 						" data-sensor-num=" + sensor_cond_cnt +
-						" onchange='select_box(this.value, this.id)'><option selected='selected' value='i" + "nit'>센서 선택</option>";
+						" onchange='select_box(this.value, this.id)'><option selected='selected' value='init'>센서 선택</option>";
 					var noOfSelectedSensor = $('.selected >.sensor').length;
 					if (noOfSelectedSensor == 0) alert("센서를 먼저 선택해 주세요!"); //선택한 센서 없을 때 알림
 					else { //있으면
@@ -441,6 +479,7 @@
 					$("#form-condition").empty();
 					act_cond_cnt = 0;
 					sensor_cond_cnt = 0;
+					range_slider_ids=[];
 					break;
 			}
 		}
