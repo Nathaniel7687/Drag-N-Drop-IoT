@@ -236,28 +236,39 @@
 
 	<!-- bootstrap slider -->
 	<script>
-		var range_slider_ids = [];
-		
+		var range_slider_ids = [];		
 		
 		function slider_setting(num, opt) {
-			//console.info("slider setting");
 			if (opt == "single") {
+// 				var ss = new Slider('#single-slider', {
+// 					formatter: function(value) {
+// 						return '레벨: ' + value;
+// 					},
+// 					id: "single-slider",
+// 					max: 4,
+// 					min: 0,
+// 					step: 1,
+// 					tooltip:'always',
+// 					value: 0
+// 				});
 				$('#single-slider').bootstrapSlider({
 					formatter: function(value) {
+						//console.info("single slider value: "+value);
 						return '레벨: ' + value;
 					},
 					id: "single-slider",
 					max: 4,
 					min: 0,
 					step: 1,
+					tooltip:'always',
 					value: 0
 				});
 			} else {
 				var slider_id = num+"-"+opt + "-slider";
 				var empty=[];
-				var min, max, range, step;
+				var min, max, range, step, fmt;
 
-				if(opt.match("S_Ultrasonic")){ min=2; max=400; range="["+min+", 30]"; step=1;}
+				if(opt.match("S_Ultrasonic")){ min=2; max=400; range="["+min+", 30]"; step=1; fmt="";}
 				else if(opt.match("S_Humidity")){ min=20; max=90; range="["+min+", 45]"; step=5;}
 				else if(opt.match("S_Temperature")){ min=0; max=50; range="["+min+", 20]"; step=1;}
 				else if(opt.match("S_Light")){ min=0; max=1000; range="["+min+", 50]"; step=10;}
@@ -267,7 +278,7 @@
 					for(var i=0;i<range_slider_ids.length;i++){
 						if(range_slider_ids[i].match(num)){ //같은 select box에서 선택된 경우 새로 선택된 걸로 replace
 							//console.log("match value: "+range_slider_ids[i]);
-							console.log("id변경 from "+range_slider_ids[i]+" to "+slider_id);
+							//console.log("id변경 from "+range_slider_ids[i]+" to "+slider_id);
 							$('#'+range_slider_ids[i]).attr("id",slider_id);
 							$('#sensor-cond-'+num+' > #range_slider > #range-slider').bootstrapSlider("setAttribute","min",min);
 							$('#sensor-cond-'+num+' > #range_slider > #range-slider').bootstrapSlider("setAttribute","max",max);
@@ -282,11 +293,42 @@
 
 					//console.log("range slider push: ");
 					//console.info(range_slider_ids.join(','));
-				}
-
-				
+				}				
 				
 				$('#sensor-cond-' + num + ' > #range_slider > #range-slider').bootstrapSlider({
+					formatter: function(value) {
+						//var cur_id = "#sensor-cond-"+num+" > #range_slider > #"+slider_id;
+						var us_val, hm_val, tm_val, lt_val, gs_val;
+						switch(opt){
+						case "S_Ultrasonic": 
+							us_val = value[0] + " : " + value[1];
+							//console.info(opt+" slider value = "+us_val);
+							break;
+						case "S_Humidity":
+							hm_val = value[0] + " : " + value[1];
+							//console.info(opt+" slider value = "+hm_val);
+							break;
+						case "S_Temperature":
+							tm_val = value[0] + " : " + value[1];
+							//console.info(opt+" slider value = "+tm_val);
+							break;
+						case "S_Light":
+							lt_val = value[0] + " : " + value[1];
+							//console.info(opt+" slider value = "+lt_val);
+							break;
+						case "S_Gas":
+							gs_val = value[0] + " : " + value[1];
+							//console.info(opt+" slider value = "+gs_val);
+							break; 
+						}
+						return value[0] + " : " + value[1];
+// 						if(Array.isArray(value)){
+// 							console.info("r-slider value: "+value[0] + " : " + value[1]);
+// 							return value[0] + " : " + value[1];
+// 						} else {
+// 							return value;
+// 						}						
+					},
 					id: slider_id,
 					max: max,
 					min: min,
@@ -299,7 +341,7 @@
 		}
 
 		// Slider Event
-		$('#single-slider').on("slide", function(e){
+		$('#single-slider').on("bootstrapSlide", function(e){
 			var act_value = e.value;
 			//console.info("single slider value: "+act_value);
 		});
@@ -323,9 +365,9 @@
 			"; display:none'><input id='range-slider' type='text'/></div>";
 		var radio_form = "<div class='conds col-md-8' id='radio_form' style='float:right; display:none'><l" +
 			"abel class='radio-inline' style='margin-left:50px;'> <input type='radio' name='i" +
-			"nlineRadioOptions' id='inlineRadio1' value='option1'> true </label><label class=" +
+			"nlineRadioOptions' id='inlineRadio1' value='0'> true </label><label class=" +
 			"'radio-inline' style='margin-left:50px;'> <input type='radio' name='inlineRadioO" +
-			"ptions' id='inlineRadio2' value='option2'> false </label></div></div>";
+			"ptions' id='inlineRadio2' value='0'> false </label></div></div>";
 		var sensor_cond_cnt = 0;
 		var act_cond_cnt = 0;
 
@@ -346,13 +388,8 @@
 			return switched;
 		}
 
-		// $('select').change(function(){             $(this)
-		// .siblings('select')                 .children('option[value='+this.value+']')
-		// .attr('disabled',true)                 .siblings().removeAttr('disabled');
-		// }); select box 값 선택될 때마다 출력
-
 		function select_box(option, id) {
-			console.info("changed");
+			//console.info("changed");
 			id = '#' + id;
 			var data_s_num = $(id).attr('data-sensor-num');
 
@@ -387,14 +424,12 @@
 					break;
 				default:
 					show_child = $('#' + show_sensor_num + ' > #range_slider');
-					show_child.show();
 					slider_setting(data_s_num,option);
+					show_child.show();
+					
 			}
 		}
-
-		// $('#dropdown_sensor').change(function(){             $('#dropdown_sensor
-		// option:selected').each(function(){                 console.log("changed");
-		// });         }).change(); 버튼 클릭 이벤트
+		
 		function btn_action(whichDevice) {
 			var form_id = document.getElementById("form-condition");
 
@@ -474,12 +509,100 @@
 					}
 					break;
 				case 'build':
+					var noOfSelectedAct = $('.selected >.actuator').length;
+					var noOfSelectedSensor = $('.selected >.sensor').length;
+					if (noOfSelectedAct == 0) alert("기기를 선택해 주세요!"); //선택한 기기 없을 때 알림
+					else if(noOfSelectedSensor == 0) alert("센서를 선택해 주세요!"); //선택한 센서 없을 때 알림
+					else{	//둘 다 선택되었을 때
+						var all_conds = document.getElementsByClassName("row cond");
+						var act_ip = $('.selected >.actuator').attr('id');
+						//console.info(all_conds);
+						var s_arr = new Array();	
+						var a_arr = new Array();					 
+						var conditions = new Object();
+						var sel_box, selected, radio_val, range_val, single_val,rv;
+						for(var i=0;i<all_conds.length;i++){
+							sel_box = all_conds[i].getElementsByTagName("select");
+							selected = sel_box[0].options[sel_box[0].selectedIndex].value;	//selectbox에서 선택된 센서 혹은 액추에이터
+							var s_cond = new Object();
+							var a_cond = new Object();
+							if(all_conds[i].id.match("sensor")){ //sensor 부분 슬라이더 및 라디오버튼 값 가져오기
+								//console.log(all_conds[i].id+", data-num = "+all_conds[i].getAttribute('data-sensor-num'));							
+								if($("#"+all_conds[i].id+" > #radio_form").is(':visible') == true){	//radio form 조건일 때 
+									console.warn(all_conds[i].id+"에는 radio form 존재");
+									radio_val = $("input:radio[name='inlineRadioOptions']:checked").val();
+									//console.info($("input:radio[name='inlineRadioOptions']:checked").val());								
+									//console.log(sel_box[0].options[sel_box[0].selectedIndex].value);
+									s_cond[selected] = radio_val;								
+								}
+								else {	//range slider 조건일 때
+									console.warn(all_conds[i].id+"에는 range slider 존재");
+									//console.info($("#"+all_conds[i].id+" > #range_slider > #range-slider").bootstrapSlider('getValue'));
+									//console.log(sel_box[0].options[sel_box[0].selectedIndex].value);
+									rv = $("#"+all_conds[i].id+" > #range_slider > #range-slider").bootstrapSlider('getValue');
+									range_val = rv[0]+","+rv[1];
+									s_cond[selected] = range_val;
+								}
+								s_arr.push(s_cond);	
+								console.info("s_arr: ");								
+								console.log(s_arr);
+							} //if
+							else{
+								//actuator 부분 슬라이더 값 가져오기
+								//console.warn(all_conds[i].id+"에는 single slider 존재");
+								single_val = $("#"+all_conds[i].id+" > #single_slider > input").bootstrapSlider('getValue');
+								//console.info($("#"+all_conds[i].id+" > #single_slider > input").bootstrapSlider('getValue'));
+								a_cond[selected] = single_val;
+								a_arr.push(a_cond);				
+
+								console.info("a_arr: ");								
+								console.log(a_arr);				
+							} //else									
+						} //for
+
+						//console.info(s_conds);
+						//json_obj = {list:submit_arr};
+						conditions.sensor = s_arr;
+						conditions.actuator = a_arr;
+						conditions.ip = act_ip;
+
+//	 					var final_json = new Object();
+//	 					final_json = JSON.stringify(conditions);
+// 	 					console.info(conditions);
+//	 					console.info(final_json);
+						
+						//file_write.php로 값 전송 & 성공 시 조건부 클리어
+						$.ajax({
+							type: 'post',
+							url: 'file_write.php',
+							data: conditions,
+							success: function(d){
+								if(d) {
+									alert("빌드 성공! 파일 출력이 완료되었습니다.");
+									$("#form-condition").empty();
+									$("#selected-sensor").empty();
+									$("#selected-actuator").empty();
+									act_cond_cnt = 0;
+									sensor_cond_cnt = 0;
+									range_slider_ids=[];
+								}
+								else alert("빌드 실패! 파일 출력에 실패하였습니다.");
+							},
+							error: function(jqXHR, textStatus, errorThrown){
+								alert("빌드 에러!");
+								console.error(jqXHR);
+								console.error("error! : "+errorThrown);
+							} 
+						});
+					}
+										
 					break;
 				case 'reset': //조건 리스트 모두 삭제
 					$("#form-condition").empty();
 					act_cond_cnt = 0;
 					sensor_cond_cnt = 0;
 					range_slider_ids=[];
+					
 					break;
 			}
 		}
