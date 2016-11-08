@@ -503,6 +503,7 @@
 					else{	//둘 다 선택되었을 때
 						var all_conds = document.getElementsByClassName("row cond");
 						var act_ip = $('.selected >.actuator').attr('id');
+						var sensor_ip = $('.selected >.sensor').attr('id');
 						//console.info(all_conds);
 						var s_arr = new Array();	
 						var a_arr = new Array();					 
@@ -551,7 +552,8 @@
 						//json_obj = {list:submit_arr};
 						conditions.sensor = s_arr;
 						conditions.actuator = a_arr;
-						conditions.ip = act_ip;
+						conditions.a_ip = act_ip;
+						conditions.s_ip = sensor_ip;
 
 //	 					var final_json = new Object();
 //	 					final_json = JSON.stringify(conditions);

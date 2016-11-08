@@ -7,7 +7,8 @@
 	//$recieved_json = $_POST;
 	$sensor = $_POST['sensor'];
 	$act = $_POST['actuator'];
-	$act_ip = $_POST['ip'];
+	$act_ip = $_POST['a_ip'];
+	$sensor_ip = $_POST['s_ip'];
 
 // 	$firephp->log($sensor,'sensor');
 // 	$firephp->log($act,'actuator');
@@ -26,6 +27,8 @@
 	$piSensorFile = fopen("../Pi with Pi/src/piSensor.c", "w");
 	$piActFile = fopen("../Pi with Pi/src/piActuator.c", "w");
 	$bashFile = fopen("../Pi with Pi/build.sh","w");
+	$ipinfoFile = fopen("../Pi with Pi/ipInfo.txt","w");
+	
 	if(!$piSensorFile) die("piSensor.c 파일을 열 수 없습니다.");
 	if(!$piActFile) die("piActuator.c 파일을 열 수 없습니다.");
 	
@@ -106,6 +109,12 @@
 	//file close
 	fclose($piSensorFile);
 	fclose($piActFile);
+	
+	//write ip info file
+	$ipinfo = $sensor_ip.'
+'.$act_ip;
+	fwrite($ipinfoFile, $ipinfo);
+	fclose($ipinfoFile);
 	
 	//write bash file
 	$bash = '#!/bin/bash
