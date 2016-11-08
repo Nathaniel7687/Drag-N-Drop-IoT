@@ -241,7 +241,7 @@ void sendDeviceInfoToServer()
         write(server_fd, sensor, sizeof(Sensor));
         break;
     case ACTUATOR:
-        write(server_fd, actuator, sizeof(actuator));
+        write(server_fd, actuator, sizeof(Actuator));
         break;
     }
 }
