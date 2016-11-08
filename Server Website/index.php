@@ -298,37 +298,25 @@
 				
 				$('#sensor-cond-' + num + ' > #range_slider > #range-slider').bootstrapSlider({
 					formatter: function(value) {
-						//var cur_id = "#sensor-cond-"+num+" > #range_slider > #"+slider_id;
-						var us_val, hm_val, tm_val, lt_val, gs_val;
-						switch(opt){
-						case "S_Ultrasonic": 
-							us_val = value[0] + " : " + value[1];
-							//console.info(opt+" slider value = "+us_val);
-							break;
-						case "S_Humidity":
-							hm_val = value[0] + " : " + value[1];
-							//console.info(opt+" slider value = "+hm_val);
-							break;
-						case "S_Temperature":
-							tm_val = value[0] + " : " + value[1];
-							//console.info(opt+" slider value = "+tm_val);
-							break;
-						case "S_Light":
-							lt_val = value[0] + " : " + value[1];
-							//console.info(opt+" slider value = "+lt_val);
-							break;
-						case "S_Gas":
-							gs_val = value[0] + " : " + value[1];
-							//console.info(opt+" slider value = "+gs_val);
-							break; 
-						}
-						return value[0] + " : " + value[1];
-// 						if(Array.isArray(value)){
-// 							console.info("r-slider value: "+value[0] + " : " + value[1]);
-// 							return value[0] + " : " + value[1];
-// 						} else {
-// 							return value;
-// 						}						
+// 						var us_val, hm_val, tm_val, lt_val, gs_val;
+// 						switch(opt){
+// 						case "S_Ultrasonic": 
+// 							us_val = value[0] + " : " + value[1];
+// 							//console.info(opt+" slider value = "+us_val);           
+// 							break;
+// 						case "S_Humidity":
+// 							hm_val = value[0] + " : " + value[1];
+// 							//console.info(opt+" slider value = "+hm_val);
+// 							break;
+// 						case "S_Temperature":
+// 							tm_val = value[0] + " : " + value[1];
+// 							//console.info(opt+" slider value = "+tm_val);
+// 							break;
+// 						case "S_Light": lt_val = value[0] + " : " + value[1];
+// 							break;
+// 						case "S_Gas": gs_val = value[0] + " : " + value[1]; break; 
+// 						}
+						return value[0] + " : " + value[1];					
 					},
 					id: slider_id,
 					max: max,
@@ -344,7 +332,6 @@
 		// Slider Event
 		$('#single-slider').on("bootstrapSlide", function(e){
 			var act_value = e.value;
-			//console.info("single slider value: "+act_value);
 		});
 	</script>
 
@@ -366,9 +353,9 @@
 			"; display:none'><input id='range-slider' type='text'/></div>";
 		var radio_form = "<div class='conds col-md-8' id='radio_form' style='float:right; display:none'><l" +
 			"abel class='radio-inline' style='margin-left:50px;'> <input type='radio' name='i" +
-			"nlineRadioOptions' id='inlineRadio1' value='0'> true </label><label class=" +
+			"nlineRadioOptions' id='inlineRadio1' value='true'> true </label><label class=" +
 			"'radio-inline' style='margin-left:50px;'> <input type='radio' name='inlineRadioO" +
-			"ptions' id='inlineRadio2' value='0'> false </label></div></div>";
+			"ptions' id='inlineRadio2' value='false'> false </label></div></div>";
 		var sensor_cond_cnt = 0;
 		var act_cond_cnt = 0;
 
@@ -390,7 +377,6 @@
 		}
 
 		function select_box(option, id) {
-			//console.info("changed");
 			id = '#' + id;
 			var data_s_num = $(id).attr('data-sensor-num');
 
