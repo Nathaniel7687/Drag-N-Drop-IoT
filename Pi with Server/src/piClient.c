@@ -11,12 +11,12 @@ int main()
     int tid;
     int status;
 
-    // tid = pthread_create(&p_thread[0], NULL, thread_sendDeviceInfoToServer, NULL);
-    // if (tid < 0)
-    // {
-    //     perror("thread_sendDeviceInfoToServer() create error");
-    //     exit(1);
-    // }
+    tid = pthread_create(&p_thread[0], NULL, thread_sendDeviceInfoToServer, NULL);
+    if (tid < 0)
+    {
+        perror("thread_sendDeviceInfoToServer() create error");
+        exit(1);
+    }
 
     tid = pthread_create(&p_thread[1], NULL, thread_recvProgramFromServer, NULL);
     if (tid < 0)
@@ -25,11 +25,11 @@ int main()
         exit(1);
     }
 
-    // for (int i = 0; i < MAX_THREAD; i++)
-    // {
-    //     pthread_join(p_thread[i], (void **)&status);
-    // }
-    pthread_join(p_thread[1], (void **)&status);
+    for (int i = 0; i < MAX_THREAD; i++)
+    {
+        pthread_join(p_thread[i], (void **)&status);
+    }
+    //pthread_join(p_thread[1], (void **)&status);
 
     return 0;
 }

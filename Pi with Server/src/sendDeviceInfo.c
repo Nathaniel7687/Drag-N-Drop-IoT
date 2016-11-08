@@ -27,7 +27,7 @@ void *thread_sendDeviceInfoToServer(void *data)
     memset((void *)&server_addr, 0x00, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     // TODO: necessary to change ip in inet_addr("127.0.0.1").
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_addr.sin_addr.s_addr = inet_addr("165.132.121.125");
     server_addr.sin_port = htons(12121);
 
     while (connect(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
