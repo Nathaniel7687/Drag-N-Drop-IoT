@@ -11,13 +11,13 @@ void* thread_sendProgramToClient(void* data)
 
     while (true) {
         // TODO: Have to define path of Pi with Pi base code's directory.
-        if (access("/home/nathaniel/Desktop/Drag N Drop IoT/Pi with Pi/build.sh", F_OK) == 0) {
+        if (access("/home/supercom2/Projects/Drag-N-Drop-IoT/Pi with Pi/build.sh", F_OK) == 0) {
             // This section is build program.
             {
                 int pid = fork();
                 if (pid == 0) {
                     // TODO: Have to change build.sh path.
-                    execl("/home/nathaniel/Desktop/Drag N Drop IoT/Pi with Pi/build.sh", "build.sh", NULL);
+                    execl("/home/supercom2/Projects/Drag-N-Drop-IoT/Pi with Pi/build.sh", "build.sh", NULL);
                     return 0;
                 }
 
@@ -47,7 +47,7 @@ void* thread_sendProgramToClient(void* data)
 
                         if (!init) {
                             server_addr.sin_addr.s_addr = inet_addr(pStr);
-                            server_addr.sin_port = htons(12121);
+                            server_addr.sin_port = htons(12122);
 
                             while (connect(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
                                 perror("> Connect to server error");
@@ -80,7 +80,7 @@ void* thread_sendProgramToClient(void* data)
                             pthread_exit((void*)0);
                         } else {
                             server_addr.sin_addr.s_addr = inet_addr(pStr);
-                            server_addr.sin_port = htons(12121);
+                            server_addr.sin_port = htons(12122);
 
                             while (connect(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
                                 perror("> Connect to server error");
@@ -121,7 +121,7 @@ void* thread_sendProgramToClient(void* data)
                 remove("../Pi with Pi/ipInfo.txt");
             }
         } else {
-            perror("> Can't find build.sh");
+            //perror("> Can't find build.sh");
         }
         delay(1);
     }
