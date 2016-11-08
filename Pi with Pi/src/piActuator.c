@@ -13,9 +13,7 @@
 #include <errno.h>
 #include "piActuator.h"
 #include "uart_api.h"
-
-int main()
-{
+int main(){
     pthread_t p_thread;
     int tid;
     int status;
@@ -31,9 +29,7 @@ int main()
 
     return 0;
 }
-
-void *thread_recvDeviceInfoFromClient(void *tData)
-{
+void *thread_recvDeviceInfoFromClient(void *tData){
     int fd;
     int client_fd;
     int server_fd;
@@ -66,9 +62,7 @@ void *thread_recvDeviceInfoFromClient(void *tData)
         perror("> Accept error");
     }
 
-    openDevice(&fd);
-    while (true)
-    {
+    openDevice(&fd);while (true){
         char level[2];
 
         if (read(client_fd, &sensor, sizeof(Sensor)) > 0)
@@ -82,31 +76,21 @@ void *thread_recvDeviceInfoFromClient(void *tData)
 
             // TODO: Modify actuate condition.
             // BEGIN
-            if (sensor.light > 800)
-            {
-                strcpy(level, "4");
-            }
-            else if (sensor.light > 600)
-            {
-                strcpy(level, "3");
-            }
-            else if (sensor.light > 400)
-            {
-                strcpy(level, "2");
-            }
-            else if (sensor.light > 200)
-            {
-                strcpy(level, "1");
-            }
-            else
-            {
-                strcpy(level, "0");
-            }
-            // END
+            if(sensor.temperature > 21){ 
+						strcpy(level,"4");
+			}
+				else if(sensor.temperature > 14){ 
+						strcpy(level,"3");
+			}
+				else if(sensor.temperature > 7){ 
+						strcpy(level,"2");
+			}
+				else if(sensor.temperature > 0){ 
+						strcpy(level,"1");
+			}
+				else { strcpy(level,"0");}
 
-            // TCIFLUSH	 수신했지만 읽어들이지 않은 데이터를 버립니다.
-            // TCOFLUSH	 쓰기응이지만 송신하고 있지 않는 데이터를 버립니다.
-            // TCIOFLUSH 수신했지만 읽어들이지 않은 데이터, 및 쓰기응이지만 송신하고 있지 않는 데이터의 양쪽 모두를 버립니다.
+
             tcflush(fd, TCIOFLUSH);
             user_uart_write(fd, (unsigned char *)level, 2);
             printf("  %d, %s\n", fd, level);
@@ -129,7 +113,7 @@ void *thread_recvDeviceInfoFromClient(void *tData)
         }
     }
 }
-
+		
 void openDevice(int *fd)
 {
     if (access(USB_SERIAL, R_OK & W_OK) == 0)

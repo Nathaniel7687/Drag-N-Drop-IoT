@@ -13,7 +13,6 @@
 #include <errno.h>
 #include "piSensor.h"
 #include "uart_api.h"
-
 int main()
 {
     pthread_t p_thread;
@@ -31,7 +30,6 @@ int main()
 
     return 0;
 }
-
 void *thread_sendDeviceInfoToServer(void *tData)
 {
     int fd;
@@ -48,10 +46,7 @@ void *thread_sendDeviceInfoToServer(void *tData)
 
     memset((void *)&server_addr, 0x00, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    // TODO: necessary to change ip in inet_addr("127.0.0.1").
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    server_addr.sin_port = htons(12122);
-
+		server_addr.sin_addr.s_addr = inet_addr("192.168.0.2");server_addr.sin_port = htons(12122);
     while (connect(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
     {
         perror("> Connect to server error");
@@ -64,7 +59,6 @@ void *thread_sendDeviceInfoToServer(void *tData)
     while (true)
     {
         readPacket(fd, data);
-        // TEST_setSensorStruct(&sensor);
         setDataFromPacket(&sensor, data);
         write(server_fd, &sensor, sizeof(Sensor));
         delay(1);
@@ -101,9 +95,6 @@ void readPacket(int fd, unsigned char *data)
     unsigned char temp_buff[SERIAL_MAX_BUFF] = {0};
     bzero(data, SERIAL_MAX_BUFF);
 
-    // TCIFLUSH	 수신했지만 읽어들이지 않은 데이터를 버립니다.
-    // TCOFLUSH	 쓰기응이지만 송신하고 있지 않는 데이터를 버립니다.
-    // TCIOFLUSH 수신했지만 읽어들이지 않은 데이터, 및 쓰기응이지만 송신하고 있지 않는 데이터의 양쪽 모두를 버립니다.
     tcflush(fd, TCIFLUSH);
     printf("> Read packet data of sensor.\n");
 
@@ -126,13 +117,6 @@ void processPacket(unsigned char *data, unsigned char *buff, int buff_size)
     int index_start = 0;
     int index_end = 0;
     bool start = false;
-
-    // printf("  ");
-    // for (int i = 0; i < buff_size; i++)
-    // {
-    //     printf("%02X ", buff[i]);
-    // }
-    // printfln();
 
     for (int i = 0; i < buff_size; i++)
     {
@@ -194,8 +178,6 @@ void setDataFromPacket(Sensor *sensor, unsigned char data[SERIAL_MAX_BUFF])
         printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor->humidity, sensor->temperature);
         printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor->heatindex, sensor->light);
         printf("  Gas\t\t: %04d\n", sensor->gas);
-
-        // printf("\033[7A");
     }
 }
 

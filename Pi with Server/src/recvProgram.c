@@ -64,7 +64,7 @@ void *thread_recvProgramFromServer(void *data)
             if (pid == 0)
             {
                 // TODO: Have to change the program path.
-                execl("/home/kh/Drag-N-Drop-IoT/Pi with Server/recvedProgram", "recvedProgram", NULL);
+                execl("/home/nathaniel/Drag-N-Drop-IoT/Pi with Server/recvedProgram", "recvedProgram", NULL);
                 return 0;
             }
         }

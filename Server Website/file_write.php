@@ -25,9 +25,9 @@
 	
 	//file open
 	$piSensorFile = fopen("../Pi with Pi/src/piSensor.c", "w");
-	$piActFile = fopen("../Pi with Pi/src/piActuator.c", "w");
-	$bashFile = fopen("../Pi with Pi/build.sh","w");
-	$ipinfoFile = fopen("../Pi with Pi/ipInfo.txt","w");
+	$piActFile    = fopen("../Pi with Pi/src/piActuator.c", "w");
+	$bashFile     = fopen("../Pi with Pi/build.sh","w");
+	$ipinfoFile   = fopen("../Pi with Pi/ipInfo.txt","w");
 	
 	if(!$piSensorFile) die("piSensor.c 파일을 열 수 없습니다.");
 	if(!$piActFile) die("piActuator.c 파일을 열 수 없습니다.");
@@ -121,6 +121,9 @@
 make clean all';
 	fwrite($bashFile, $bash);
 	fclose($bashFile);
-	
+        chmod("../Pi with Pi/src/piSensor.c", 0777);
+        chmod("../Pi with Pi/src/piActuator.c", 0777);
+        chmod("../Pi with Pi/build.sh", 0777);
+        chmod("../Pi with Pi/ipInfo.txt", 0777);
 	echo true;
 ?>
