@@ -152,10 +152,11 @@
 						<div aria-label="add buttons" class="btn-group btn-group-justified" role="group">
 							<div class="btn-group btn-group-lg" role="group">
 								<button aria-label="Add Sensor Conditions" class="btn btn-default" onclick="btn_action('sensor')" type="button" value="sensor-add">
-                                        <span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;&nbsp;센서 조건
+                                        <span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;&nbsp;센서 조건 추가
                                     </button>
 							</div>
-							<div class="btn-group btn-group-lg" role="group">
+							<!-- hide for now -->
+							<div class="btn-group btn-group-lg" role="group" style="display:none;">
 								<button aria-label="Add Actuator Conditions" class="btn btn-default" onclick="btn_action('actuator')" type="button" value="actuator-add">
                                         <span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;&nbsp;기기 조건
                                     </button>
@@ -529,14 +530,14 @@
 							if(all_conds[i].id.match("sensor")){ //sensor 부분 슬라이더 및 라디오버튼 값 가져오기
 								//console.log(all_conds[i].id+", data-num = "+all_conds[i].getAttribute('data-sensor-num'));							
 								if($("#"+all_conds[i].id+" > #radio_form").is(':visible') == true){	//radio form 조건일 때 
-									console.warn(all_conds[i].id+"에는 radio form 존재");
+									//console.warn(all_conds[i].id+"에는 radio form 존재");
 									radio_val = $("input:radio[name='inlineRadioOptions']:checked").val();
 									//console.info($("input:radio[name='inlineRadioOptions']:checked").val());								
 									//console.log(sel_box[0].options[sel_box[0].selectedIndex].value);
 									s_cond[selected] = radio_val;								
 								}
 								else {	//range slider 조건일 때
-									console.warn(all_conds[i].id+"에는 range slider 존재");
+									//console.warn(all_conds[i].id+"에는 range slider 존재");
 									//console.info($("#"+all_conds[i].id+" > #range_slider > #range-slider").bootstrapSlider('getValue'));
 									//console.log(sel_box[0].options[sel_box[0].selectedIndex].value);
 									rv = $("#"+all_conds[i].id+" > #range_slider > #range-slider").bootstrapSlider('getValue');
@@ -544,8 +545,8 @@
 									s_cond[selected] = range_val;
 								}
 								s_arr.push(s_cond);	
-								console.info("s_arr: ");								
-								console.log(s_arr);
+								//console.info("s_arr: ");								
+								//console.log(s_arr);
 							} //if
 							else{
 								//actuator 부분 슬라이더 값 가져오기
@@ -555,8 +556,8 @@
 								a_cond[selected] = single_val;
 								a_arr.push(a_cond);				
 
-								console.info("a_arr: ");								
-								console.log(a_arr);				
+								//console.info("a_arr: ");								
+								//console.log(a_arr);				
 							} //else									
 						} //for
 
