@@ -25,6 +25,7 @@
 	//file open
 	$piSensorFile = fopen("../Pi with Pi/src/piSensor.c", "w");
 	$piActFile = fopen("../Pi with Pi/src/piActuator.c", "w");
+	$bashFile = fopen("../Pi with Pi/build.sh","w");
 	if(!$piSensorFile) die("piSensor.c 파일을 열 수 없습니다.");
 	if(!$piActFile) die("piActuator.c 파일을 열 수 없습니다.");
 	
@@ -105,6 +106,12 @@
 	//file close
 	fclose($piSensorFile);
 	fclose($piActFile);
+	
+	//write bash file
+	$bash = '#!/bin/bash
+make clean all';
+	fwrite($bashFile, $bash);
+	fclose($bashFile);
 	
 	echo true;
 ?>
