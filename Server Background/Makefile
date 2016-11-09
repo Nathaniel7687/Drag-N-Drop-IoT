@@ -20,6 +20,16 @@ S_OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(S_SRCS)))
 R_SRCS=$(wildcard $(SRCDIR)/*recvDeviceInfo.c)
 R_OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(R_SRCS)))
 
+BS_TARGET=./PiBuild/sensor
+BA_TARGET=./PiBuild/actuator
+BINCDIR=./PiBuild/inc
+BSRCDIR=./PiBuild/src
+BOBJDIR=./PiBuild/src/obj
+BS_SRCS=$(wildcard $(BSRCDIR)/*Sensor.c) uart_api.c
+BS_OBJS=$(patsubst %.c,$(BOBJDIR)/%.o,$(notdir $(BS_SRCS)))
+BA_SRCS=$(wildcard $(BSRCDIR)/*Actuator.c) uart_api.c
+BA_OBJS=$(patsubst %.c,$(BOBJDIR)/%.o,$(notdir $(BA_SRCS)))
+
 all: $(S_TARGET) $(R_TARGET)
 
 $(S_TARGET): $(S_OBJS)
@@ -39,3 +49,23 @@ $(R_OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c
 clean:
 	$(DEL) -rf $(OBJDIR)/*.o
 	$(DEL) -rf $(S_TARGET) $(R_TARGET)
+
+build: $(BS_TARGET) $(BA_TARGET)
+
+$(BS_TARGET): $(BS_OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BA_TARGET): $(BA_OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BS_OBJS): $(BOBJDIR)/%.o: $(BSRCDIR)/%.c
+	@mkdir -p $(BOBJDIR)
+	$(CC) -I $(BINCDIR) -c $(CFLAGS) $< -o $@
+
+$(BA_OBJS): $(BOBJDIR)/%.o: $(BSRCDIR)/%.c
+	@mkdir -p $(BOBJDIR)
+	$(CC) -I $(BINCDIR) -c $(CFLAGS) $< -o $@
+
+bclean:
+	$(DEL) -rf $(BOBJDIR)/*.o
+	$(DEL) -rf $(BS_TARGET) $(BA_TARGET)

@@ -45,18 +45,18 @@ void* thread_sendProgramToClient(void* data)
 
     while (true) {
         // TODO: Have to define path of Pi with Pi base code's directory.
-        if (access("/home/supercom2/Projects/Drag-N-Drop-IoT/Pi with Pi/build.sh", F_OK) == 0) {
+        if (access("/home/supercom2/Projects/Drag-N-Drop-IoT/Server Background/PiBuild/build.sh", F_OK) == 0) {
             // This section is build program.
             {
-                printf("Start build the program.\n");
+                printf("> Start build the program.\n");
                 int pid = fork();
                 if (pid == 0) {
                     // TODO: Have to change build.sh path.
-                    execl("/home/supercom2/Projects/Drag-N-Drop-IoT/Pi with Pi/build.sh", "build.sh", NULL);
+                    execl("/home/supercom2/Projects/Drag-N-Drop-IoT/Server Background/PiBuild/build.sh", "build.sh", NULL);
                     return 0;
                 }
 
-                remove("../Pi with Pi/build.sh");
+                remove("./PiBuild/build.sh");
             }
 
             // TODO: Need to modify that send program both sensor and actuator.
@@ -71,16 +71,19 @@ void* thread_sendProgramToClient(void* data)
                 memset((void*)&server_addr, 0x00, sizeof(server_addr));
                 server_addr.sin_family = AF_INET;
 
-                FILE* pFile = fopen("../Pi with Pi/ipInfo.txt", "r");
+                FILE* pFile = fopen("./PiBuild/ipInfo.txt", "r");
                 if (pFile != NULL) {
                     char strTemp[255];
-                    char* pStr;
+                    char* pStr = NULL;
                     bool init = false;
+                    printf("> Open ipInfo.txt file.\n");
 
                     while (!feof(pFile)) {
                         pStr = fgets(strTemp, sizeof(strTemp), pFile);
+			printf("> Sensor IP: %s\n", pStr);
 
                         if (!init) {
+                            init = true;
                             server_addr.sin_addr.s_addr = inet_addr(pStr);
                             server_addr.sin_port = htons(12122);
 
@@ -92,7 +95,7 @@ void* thread_sendProgramToClient(void* data)
                             size_t fileSize = 0;
                             size_t readTotalSize = 0;
                             size_t readSize = 0;
-                            FILE* file = fopen("../Pi with Pi/sensor", "rb");
+                            FILE* file = fopen("./PiBuild/sensor", "rb");
                             char buff[MAX_FILE_BUFF_SIZE] = { '\0' };
 
                             fseek(file, 0, SEEK_END);
@@ -110,7 +113,7 @@ void* thread_sendProgramToClient(void* data)
                             printf("> File sent\n");
                             close(server_fd);
                             fclose(file);
-                            remove("../Pi with Pi/sensor");
+                            remove("./PiBuild/sensor");
 
                             pthread_exit((void*)0);
                         } else {
@@ -125,7 +128,7 @@ void* thread_sendProgramToClient(void* data)
                             size_t fileSize = 0;
                             size_t readTotalSize = 0;
                             size_t readSize = 0;
-                            FILE* file = fopen("../Pi with Pi/actuator", "rb");
+                            FILE* file = fopen("./PiBuild/actuator", "rb");
                             char buff[MAX_FILE_BUFF_SIZE] = { '\0' };
 
                             fseek(file, 0, SEEK_END);
@@ -143,7 +146,7 @@ void* thread_sendProgramToClient(void* data)
                             printf("> File sent\n");
                             close(server_fd);
                             fclose(file);
-                            remove("../Pi with Pi/actuator");
+                            remove("./PiBuild/actuator");
 
                             pthread_exit((void*)0);
                         }
@@ -153,7 +156,7 @@ void* thread_sendProgramToClient(void* data)
                     //에러 처리
                 }
 
-                remove("../Pi with Pi/ipInfo.txt");
+                remove("./PiBuild/ipInfo.txt");
             }
         } else {
             //perror("> Can't find build.sh");

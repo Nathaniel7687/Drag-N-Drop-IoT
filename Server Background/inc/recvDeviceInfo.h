@@ -25,6 +25,13 @@ enum {
     ACTUATOR = 2
 };
 
+typedef struct socketInfo {
+    int client_fd;
+    int server_fd;
+    struct sockaddr_in client_addr;
+    struct sockaddr_in server_addr;
+} SocketInfo;
+
 typedef struct Sensor {
     int ultrasonic;
     int ir;

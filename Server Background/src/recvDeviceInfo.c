@@ -1,9 +1,9 @@
 #include "recvDeviceInfo.h"
 
-int client_fd;
-int server_fd;
-struct sockaddr_in client_addr;
-struct sockaddr_in server_addr;
+//int client_fd;
+//int server_fd;
+//struct sockaddr_in client_addr;
+//struct sockaddr_in server_addr;
 
 int main()
 {
@@ -44,35 +44,36 @@ void *thread_recvDeviceInfoFromClient(void *data)
 {
     printf("> Create recvDeviceInfoFromClient thread\n");
 
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
+    SocketInfo sockInfo;
+    if ((sockInfo.server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
     {
         printf("> Fail work to create socket fd!\n");
         exit(1);
     }
 
-    printf("> Create server socket fd: %d\n", server_fd);
+    printf("> Create server socket fd: %d\n", sockInfo.server_fd);
 
-    memset((void *)&server_addr, 0x00, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_addr.sin_port = htons(12121);
+    memset((void *)&sockInfo.server_addr, 0x00, sizeof(struct sockaddr_in));
+    sockInfo.server_addr.sin_family = AF_INET;
+    sockInfo.server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    sockInfo.server_addr.sin_port = htons(12121);
 
-    bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
-    listen(server_fd, 5);
+    bind(sockInfo.server_fd, (struct sockaddr *)&sockInfo.server_addr, sizeof(struct sockaddr_in));
+    listen(sockInfo.server_fd, 5);
 
     while (true)
     {
-        socklen_t client_size = sizeof(client_addr);
-        client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_size);
+        socklen_t client_size = sizeof(struct sockaddr_in);
+        sockInfo.client_fd = accept(sockInfo.server_fd, (struct sockaddr *)&sockInfo.client_addr, &client_size);
 
-        if (client_fd == -1)
+        if (sockInfo.client_fd == -1)
         {
             perror("> Accept error");
             continue;
         }
 
         pthread_t thread_id;
-        pthread_create(&thread_id, NULL, thread_recvData, (void *)&client_fd);
+        pthread_create(&thread_id, NULL, thread_recvData, (void *)&sockInfo);
         pthread_detach(thread_id);
     }
 
@@ -81,7 +82,7 @@ void *thread_recvDeviceInfoFromClient(void *data)
 
 void *thread_recvData(void *data)
 {
-    int client_fd = *((int *)data);
+    SocketInfo sockInfo = *((SocketInfo *)data);
     int timeout = 0;
 
     bool initStatus = false;
@@ -102,7 +103,7 @@ void *thread_recvData(void *data)
     {
         if (!initStatus)
         {
-            if (read(client_fd, &distinction, sizeof(distinction)) > 0)
+            if (read(sockInfo.client_fd, &distinction, sizeof(distinction)) > 0)
             {
                 initStatus = true;
             }
@@ -110,7 +111,7 @@ void *thread_recvData(void *data)
 
         if (distinction == SENSOR)
         {
-            if (read(client_fd, &sensor, sizeof(Sensor)) > 0)
+            if (read(sockInfo.client_fd, &sensor, sizeof(Sensor)) > 0)
             {
                 timeout = 0;
                 
@@ -119,7 +120,7 @@ void *thread_recvData(void *data)
                 // Current Time
                 sprintf(query, "%sNOW(2), ", query);
                 // Client IP Address
-                sprintf(query, "%s0x%X, ", query, htonl(client_addr.sin_addr.s_addr));
+                sprintf(query, "%s0x%X, ", query, htonl(sockInfo.client_addr.sin_addr.s_addr));
 
                 if (sensor.ultrasonic == 0)
                 {
@@ -188,7 +189,7 @@ void *thread_recvData(void *data)
                 sprintf(query, "%s)", query);
                 mysql_query(&connection, query);
 
-                printf("> Client(%s) is connected\n", inet_ntoa(client_addr.sin_addr));
+                printf("> Client(%s) is connected\n", inet_ntoa(sockInfo.client_addr.sin_addr));
                 printf("  Ultrasonic\t: %03d\t\t IR\t\t: %d\n", sensor.ultrasonic, sensor.ir);
                 printf("  Humidity\t: %02d\t\t Temperature\t: %02d\n", sensor.humidity, sensor.temperature);
                 printf("  Heatindex\t: %02.2f\t\t Light\t\t: %03d\n", sensor.heatindex, sensor.light);
@@ -199,13 +200,13 @@ void *thread_recvData(void *data)
             }
             else
             {
-                printf("  Client(%s) Timeout Count: %d\n", inet_ntoa(client_addr.sin_addr), timeout++);
+                printf("  Client(%s) Timeout Count: %d\n", inet_ntoa(sockInfo.client_addr.sin_addr), timeout++);
 
                 if (timeout > 60)
                 {
-                    printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
+                    printf("> Client(%s) is closed..\n", inet_ntoa(sockInfo.client_addr.sin_addr));
                     mysql_close(&connection);
-                    close(client_fd);
+                    close(sockInfo.client_fd);
 
                     return 0;
                 }
@@ -215,7 +216,7 @@ void *thread_recvData(void *data)
         }
         else if (distinction == ACTUATOR)
         {
-            if (read(client_fd, &actuator, sizeof(Actuator)) > 0)
+            if (read(sockInfo.client_fd, &actuator, sizeof(Actuator)) > 0)
             {
                 timeout = 0;
 
@@ -224,7 +225,7 @@ void *thread_recvData(void *data)
                 // Current Time
                 sprintf(query, "%sNOW(2), ", query);
                 // Client IP Address
-                sprintf(query, "%s0x%X, ", query, htonl(client_addr.sin_addr.s_addr));
+                sprintf(query, "%s0x%X, ", query, htonl(sockInfo.client_addr.sin_addr.s_addr));
 
                 if (actuator.fan == 0)
                 {
@@ -257,7 +258,7 @@ void *thread_recvData(void *data)
                 sprintf(query, "%s)", query);
                 mysql_query(&connection, query);
 
-                printf("> Client(%s) is connected\n", inet_ntoa(client_addr.sin_addr));
+                printf("> Client(%s) is connected\n", inet_ntoa(sockInfo.client_addr.sin_addr));
                 printf("  Buzzer: %d\n", actuator.buzzer);
                 printf("  Fan\t: %d\n", actuator.fan);
                 printf("  Servo\t: %d\n", actuator.servo);
@@ -267,13 +268,13 @@ void *thread_recvData(void *data)
             }
             else
             {
-                printf("  Client(%s) Timeout Count: %d\n", inet_ntoa(client_addr.sin_addr), timeout++);
+                printf("  Client(%s) Timeout Count: %d\n", inet_ntoa(sockInfo.client_addr.sin_addr), timeout++);
 
                 if (timeout > 60)
                 {
-                    printf("> Client(%s) is closed..\n", inet_ntoa(client_addr.sin_addr));
+                    printf("> Client(%s) is closed..\n", inet_ntoa(sockInfo.client_addr.sin_addr));
                     mysql_close(&connection);
-                    close(client_fd);
+                    close(sockInfo.client_fd);
 
                     return 0;
                 }

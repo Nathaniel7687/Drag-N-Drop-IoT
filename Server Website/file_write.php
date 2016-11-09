@@ -24,10 +24,10 @@
 	$s_code_full = $s_header . $s_front . $s_mod . $s_end;		//piSensor.c 코드
 	
 	//file open
-	$piSensorFile = fopen("../Pi with Pi/src/piSensor.c", "w");
-	$piActFile    = fopen("../Pi with Pi/src/piActuator.c", "w");
-	$bashFile     = fopen("../Pi with Pi/build.sh","w");
-	$ipinfoFile   = fopen("../Pi with Pi/ipInfo.txt","w");
+	$piSensorFile = fopen("../Server Background/PiBuild/src/piSensor.c", "w");
+	$piActFile    = fopen("../Server Background/PiBuild/src/piActuator.c", "w");
+	$bashFile     = fopen("../Server Background/PiBuild/build.sh","w");
+	$ipinfoFile   = fopen("../Server Background/PiBuild/ipInfo.txt","w");
 	
 	if(!$piSensorFile) die("piSensor.c 파일을 열 수 없습니다.");
 	if(!$piActFile) die("piActuator.c 파일을 열 수 없습니다.");
@@ -118,12 +118,12 @@
 	
 	//write bash file
 	$bash = '#!/bin/bash
-make clean all';
+make build';
 	fwrite($bashFile, $bash);
 	fclose($bashFile);
-        chmod("../Pi with Pi/src/piSensor.c", 0777);
-        chmod("../Pi with Pi/src/piActuator.c", 0777);
-        chmod("../Pi with Pi/build.sh", 0777);
-        chmod("../Pi with Pi/ipInfo.txt", 0777);
+        chmod("../Server Background/PiBuild/src/piSensor.c", 0777);
+        chmod("../Server Background/PiBuild/src/piActuator.c", 0777);
+        chmod("../Server Background/PiBuild/build.sh", 0777);
+        chmod("../Server Background/PiBuild/ipInfo.txt", 0777);
 	echo true;
 ?>
