@@ -1,9 +1,18 @@
 #include <arpa/inet.h>
-#include <stdbool.h> // bool, true, false
+#include <errno.h>
+#include <math.h>
 #include <netinet/in.h>
+#include <pthread.h>
+#include <stdbool.h> // bool, true, false
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h> // memset()
 #include <sys/socket.h>
 #include <termios.h>
+#include <time.h>
+#include <unistd.h> // read(), write(), access(), R_OK, W_OK
+
+#define MILLISECOND 100000
 
 #define USB_SERIAL "/dev/ttyACM0"
 #define BAUD_RATE 115200
@@ -30,8 +39,7 @@
 #define ACTUATOR_BIT_SERVO 0xD0
 #define ACTUATOR_BIT_BUZZER 0xD1
 
-enum SENSOR_COL
-{
+enum SENSOR_COL {
     S_START_COL1 = 0,
     S_START_COL2 = 1,
     S_ULTRASONIC_COL = 2,
@@ -43,8 +51,7 @@ enum SENSOR_COL
     S_END_COL2 = 19
 };
 
-enum ACTUATOR_COL
-{
+enum ACTUATOR_COL {
     A_START_COL1 = 0,
     A_START_COL2 = 1,
     A_ACTUATOR_COL = 2,
@@ -52,14 +59,12 @@ enum ACTUATOR_COL
     A_END_COL2 = 5
 };
 
-enum
-{
+enum {
     SENSOR = 1,
     ACTUATOR = 2
 };
 
-typedef struct Sensor
-{
+typedef struct Sensor {
     int ultrasonic;
     int ir;
     int humidity;
@@ -69,22 +74,24 @@ typedef struct Sensor
     int gas;
 } Sensor;
 
-typedef struct Actuator
-{
+typedef struct Actuator {
     int buzzer;
     int fan;
     int servo;
 } Actuator;
 
-void *thread_sendDeviceInfoToServer(void *data);
+void delay(float);
+void printfln();
+
+void* thread_sendDeviceInfoToServer(void* data);
 
 void openDevice();
 void readPacket();
 void setDataFromPacket();
 void sendDeviceInfoToServer();
 
-void strncat_s(unsigned char *, unsigned char *, int, int);
-void processPacket(unsigned char *, unsigned char *, int);
+void strncat_s(unsigned char*, unsigned char*, int, int);
+void processPacket(unsigned char*, unsigned char*, int);
 void showData(int);
 
 void TEST_setSensorStruct();

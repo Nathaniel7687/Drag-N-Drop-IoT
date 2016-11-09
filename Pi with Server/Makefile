@@ -9,22 +9,32 @@ CFLAGS+=-g
 CFLAGS+=-Wall
 #CFLAGS+=-Werror
 
-TARGET=client
+S_TARGET=sendDeviceInfo
+R_TARGET=recvProgram
 INCDIR=./inc
 SRCDIR=./src
 OBJDIR=./src/obj
-SRCS=$(wildcard $(SRCDIR)/*.c)
-OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(SRCS)))
+S_SRCS=$(wildcard $(SRCDIR)/*sendDeviceInfo.c) uart_api.c
+S_OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(S_SRCS)))
+R_SRCS=$(wildcard $(SRCDIR)/*recvProgram.c) uart_api.c
+R_OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(R_SRCS)))
 
-all: $(TARGET)
+all: $(S_TARGET) $(R_TARGET)
 
-$(TARGET): $(OBJS)
+$(S_TARGET): $(S_OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
-$(OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c
+$(R_TARGET): $(R_OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(S_OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(OBJDIR)
+	$(CC) -I $(INCDIR) -c $(CFLAGS) $< -o $@
+
+$(R_OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(OBJDIR)
 	$(CC) -I $(INCDIR) -c $(CFLAGS) $< -o $@
 
 clean:
 	$(DEL) -rf $(OBJDIR)/*.o
-	$(DEL) -rf $(TARGET)
+	$(DEL) -rf $(S_TARGET) $(R_TARGET)

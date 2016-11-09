@@ -1,10 +1,43 @@
 #include "recvProgram.h"
-#include "piClient.h"
 
 int client_fd;
 int server_fd;
 struct sockaddr_in client_addr;
 struct sockaddr_in server_addr;
+
+int main () {
+    pthread_t p_thread;
+    int tid;
+    int status;
+
+    tid = pthread_create(&p_thread, NULL, thread_recvProgramFromServer, NULL);
+    if (tid < 0)
+    {
+        perror("thread_recvProgramFromServer() create error");
+        exit(1);
+    }
+
+    pthread_join(p_thread, (void **)&status);
+
+    return 0;
+}
+
+void delay(float time)
+{
+    struct timespec req = {0};
+    double s;
+    double ms;
+    ms = modf(time, &s) * 1000000000;
+
+    req.tv_sec = s;
+    req.tv_nsec = ms;
+    while (nanosleep(&req, NULL) && errno == EINTR);
+}
+
+void printfln()
+{
+    printf("\n");
+}
 
 void *thread_recvProgramFromServer(void *data)
 {
