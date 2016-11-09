@@ -89,7 +89,7 @@ void *thread_recvProgramFromServer(void *data)
             }
             close(client_fd);
             fclose(file);
-            chmod("recvedProgram", 0755);
+            chmod("recvedProgram", 0777);
         }
 
         // This section is run the program.

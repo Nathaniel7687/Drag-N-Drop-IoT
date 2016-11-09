@@ -108,8 +108,9 @@ void* thread_sendProgramToClient(void* data)
                             printf("> File size: %zuKB\n", fileSize);
 
                             send(sensor_fd, &fileSize, sizeof(fileSize), 0);
-                            while (readTotalSize != fileSize) {
-                                readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file);
+//                            while (readTotalSize != fileSize) {
+                            while((readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file)) > 0) {
+//                                readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file);
                                 readTotalSize += readSize;
                                 send(sensor_fd, buff, readSize, 0);
                             }
