@@ -46,7 +46,7 @@ void *thread_sendDeviceInfoToServer(void *tData)
 
     memset((void *)&server_addr, 0x00, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-		server_addr.sin_addr.s_addr = inet_addr("165.132.121.133");server_addr.sin_port = htons(12122);
+		server_addr.sin_addr.s_addr = inet_addr("165.132.121.134");server_addr.sin_port = htons(12122);
     while (connect(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
     {
         perror("> Connect to server error");

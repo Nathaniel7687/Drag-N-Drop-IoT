@@ -1,7 +1,8 @@
 #include "sendProgram.h"
 
 bool initStatus;
-int server_fd;
+int sensor_fd;
+int actuator_fd;
 struct sockaddr_in server_addr;
 
 int main()
@@ -43,6 +44,10 @@ void* thread_sendProgramToClient(void* data)
 {
     printf("> Create manageProgramFromServer thread\n");
 
+    memset((void*)&server_addr, 0x00, sizeof(struct sockaddr_in));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(12122);
+
     while (true) {
         // TODO: Have to define path of Pi with Pi base code's directory.
         if (access("/home/supercom2/Projects/Drag-N-Drop-IoT/Server Background/PiBuild/build.sh", F_OK) == 0) {
@@ -55,41 +60,40 @@ void* thread_sendProgramToClient(void* data)
                     execl("/home/supercom2/Projects/Drag-N-Drop-IoT/Server Background/PiBuild/build.sh", "build.sh", NULL);
                     return 0;
                 }
+            }
 
-                remove("./PiBuild/build.sh");
+            printf("> Waiting the build..\n\n");
+            while (access("/home/supercom2/Projects/Drag-N-Drop-IoT/Server Background/PiBuild/build.sh",     F_OK) == 0) {
+                delay(1);
             }
 
             // TODO: Need to modify that send program both sensor and actuator.
             // This section is send program.
             {
-                if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-                    printf("> Fail work to create socket fd!\n");
-                    exit(1);
-                }
-                printf("> Create server socket fd: %d\n", server_fd);
-
-                memset((void*)&server_addr, 0x00, sizeof(server_addr));
-                server_addr.sin_family = AF_INET;
-
                 FILE* pFile = fopen("./PiBuild/ipInfo.txt", "r");
                 if (pFile != NULL) {
-                    char strTemp[255];
-                    char* pStr = NULL;
+                    char ipStr[45];
                     bool init = false;
-                    printf("> Open ipInfo.txt file.\n");
+                    printf("\n> Open ipInfo.txt file.\n");
 
                     while (!feof(pFile)) {
-                        pStr = fgets(strTemp, sizeof(strTemp), pFile);
-			printf("> Sensor IP: %s\n", pStr);
+                        fgets(ipStr, sizeof(ipStr), pFile);
 
                         if (!init) {
-                            init = true;
-                            server_addr.sin_addr.s_addr = inet_addr(pStr);
-                            server_addr.sin_port = htons(12122);
+                            if ((sensor_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+                                printf("> Fail work to create socket fd!\n");
+                                exit(1);
+                            }
 
-                            while (connect(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
-                                perror("> Connect to server error");
-                                delay(1);
+                            printf("> Create server socket fd: %d\n", sensor_fd);
+
+                            printf("> Sensor IP: %s", ipStr);
+                            init = true;
+                            server_addr.sin_addr.s_addr = inet_addr(ipStr);
+
+                            if (connect(sensor_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
+                                perror("> Connect to Sensor Device error");
+                                continue;
                             }
 
                             size_t fileSize = 0;
@@ -103,26 +107,30 @@ void* thread_sendProgramToClient(void* data)
                             fseek(file, 0, SEEK_SET);
                             printf("> File size: %zuKB\n", fileSize);
 
-                            send(server_fd, &fileSize, sizeof(fileSize), 0);
+                            send(sensor_fd, &fileSize, sizeof(fileSize), 0);
                             while (readTotalSize != fileSize) {
                                 readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file);
                                 readTotalSize += readSize;
-                                send(server_fd, buff, readSize, 0);
+                                send(sensor_fd, buff, readSize, 0);
                             }
 
-                            printf("> File sent\n");
-                            close(server_fd);
+                            printf("> File sent\n\n");
                             fclose(file);
                             remove("./PiBuild/sensor");
-
-                            pthread_exit((void*)0);
+                            close(sensor_fd);
                         } else {
-                            server_addr.sin_addr.s_addr = inet_addr(pStr);
-                            server_addr.sin_port = htons(12122);
+                            if ((actuator_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+                                printf("> Fail work to create socket fd!\n");
+                                exit(1);
+                            }
+                            printf("> Create server socket fd: %d\n", actuator_fd);
 
-                            while (connect(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
-                                perror("> Connect to server error");
-                                delay(1);
+                            printf("> Actuator IP: %s\n", ipStr);
+                            server_addr.sin_addr.s_addr = inet_addr(ipStr);
+
+                            if (connect(actuator_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
+                                perror("> Connect to Actuator Device error");
+                                continue;
                             }
 
                             size_t fileSize = 0;
@@ -136,19 +144,17 @@ void* thread_sendProgramToClient(void* data)
                             fseek(file, 0, SEEK_SET);
                             printf("> File size: %zuKB\n", fileSize);
 
-                            send(server_fd, &fileSize, sizeof(fileSize), 0);
+                            send(actuator_fd, &fileSize, sizeof(fileSize), 0);
                             while (readTotalSize != fileSize) {
                                 readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file);
                                 readTotalSize += readSize;
-                                send(server_fd, buff, readSize, 0);
+                                send(actuator_fd, buff, readSize, 0);
                             }
 
-                            printf("> File sent\n");
-                            close(server_fd);
+                            printf("> File sent\n\n");
                             fclose(file);
                             remove("./PiBuild/actuator");
-
-                            pthread_exit((void*)0);
+                            close(actuator_fd);
                         }
                     }
                     fclose(pFile);
@@ -163,4 +169,5 @@ void* thread_sendProgramToClient(void* data)
         }
         delay(1);
     }
+    pthread_exit((void*)0);
 }

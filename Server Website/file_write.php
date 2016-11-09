@@ -118,7 +118,8 @@
 	
 	//write bash file
 	$bash = '#!/bin/bash
-make build';
+make build
+rm -rf ./PiBuild/build.sh';
 	fwrite($bashFile, $bash);
 	fclose($bashFile);
         chmod("../Server Background/PiBuild/src/piSensor.c", 0777);
