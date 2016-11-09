@@ -8,24 +8,34 @@ CFLAGS+=-lpthread
 CFLAGS+=-g
 CFLAGS+=-Wall
 
-TARGET=server
+S_TARGET=sendProgram
+R_TARGET=recvDeviceInfo
 
 LDLIBS=$(shell mysql_config --libs)
 INCDIR=./inc
 SRCDIR=./src
 OBJDIR=./src/obj
-SRCS=$(wildcard $(SRCDIR)/*.c)
-OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(SRCS)))
+S_SRCS=$(wildcard $(SRCDIR)/*sendProgram.c)
+S_OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(S_SRCS)))
+R_SRCS=$(wildcard $(SRCDIR)/*recvDeviceInfo.c)
+R_OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(R_SRCS)))
 
-all: $(TARGET)
+all: $(S_TARGET) $(R_TARGET)
 
-$(TARGET): $(OBJS)
+$(S_TARGET): $(S_OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(R_TARGET): $(R_OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
-$(OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c
+$(S_OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(OBJDIR)
+	$(CC) -I $(INCDIR) -c $(CFLAGS) $< -o $@
+
+$(R_OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(OBJDIR)
 	$(CC) -I $(INCDIR) -c $(CFLAGS) $< -o $@
 
 clean:
 	$(DEL) -rf $(OBJDIR)/*.o
-	$(DEL) -rf $(TARGET)
+	$(DEL) -rf $(S_TARGET) $(R_TARGET)

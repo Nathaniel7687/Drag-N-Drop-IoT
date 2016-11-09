@@ -1,27 +1,31 @@
 #include <arpa/inet.h>
-#include <stdbool.h> // bool, true, false
+#include <errno.h>
+#include <math.h>
+#include <mysql/mysql.h>
 #include <netinet/in.h>
+#include <pthread.h>
+#include <stdbool.h> // bool, true, false
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h> // memset()
 #include <sys/socket.h>
 #include <termios.h>
-#include <stdlib.h>
-#include <mysql/mysql.h>
+#include <time.h>
+#include <unistd.h> // read(), write(), access(), R_OK, W_OK
 
-// #define DB_HOST "127.0.0.1"
+#define MILLISECOND 100000
 #define DB_HOST "165.132.121.125"
 #define DB_PORT 3306
 #define DB_USER "root"
 #define DB_PASS "0000"
 #define DB_NAME "master"
 
-enum
-{
+enum {
     SENSOR = 1,
     ACTUATOR = 2
 };
 
-typedef struct Sensor
-{
+typedef struct Sensor {
     int ultrasonic;
     int ir;
     int humidity;
@@ -31,15 +35,17 @@ typedef struct Sensor
     int gas;
 } Sensor;
 
-typedef struct Actuator
-{
+typedef struct Actuator {
     int buzzer;
     int fan;
     int servo;
 } Actuator;
 
-void *thread_recvDeviceInfoFromClient(void *);
-void *thread_recvData(void *);
+void delay(float);
+void printfln();
+
+void* thread_recvDeviceInfoFromClient(void*);
+void* thread_recvData(void*);
 
 void openDevice();
 void readPacket();
