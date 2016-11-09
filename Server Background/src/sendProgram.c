@@ -48,6 +48,7 @@ void* thread_sendProgramToClient(void* data)
         if (access("/home/supercom2/Projects/Drag-N-Drop-IoT/Pi with Pi/build.sh", F_OK) == 0) {
             // This section is build program.
             {
+                printf("Start build the program.\n");
                 int pid = fork();
                 if (pid == 0) {
                     // TODO: Have to change build.sh path.
