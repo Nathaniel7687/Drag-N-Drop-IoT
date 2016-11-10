@@ -73,7 +73,6 @@ void* thread_sendProgramToClient(void* data)
                 FILE* pFile = fopen("./PiBuild/ipInfo.txt", "r");
                 if (pFile != NULL) {
                     char ipStr[45];
-                    char tipStr[40] = "165.132.121.139";
                     bool init = false;
                     printf("\n> Open ipInfo.txt file.\n");
 
@@ -102,7 +101,8 @@ void* thread_sendProgramToClient(void* data)
                             size_t readSize = 0;
                             size_t readTotalSize = 0;
                             FILE* file = fopen("./PiBuild/sensor", "rb");
-                            char buff[MAX_FILE_BUFF_SIZE] = { '\0' };
+                            char buff[MAX_FILE_BUFF_SIZE];
+                            memset(buff, 0x00, MAX_FILE_BUFF_SIZE);
 
                             fseek(file, 0, SEEK_END);
                             fileSize = ftell(file);
@@ -141,6 +141,7 @@ void* thread_sendProgramToClient(void* data)
                             size_t readTotalSize = 0;
                             FILE* file = fopen("./PiBuild/actuator", "rb");
                             char buff[MAX_FILE_BUFF_SIZE] = { '\0' };
+                            memset(buff, 0x00, MAX_FILE_BUFF_SIZE);
 
                             fseek(file, 0, SEEK_END);
                             fileSize = ftell(file);

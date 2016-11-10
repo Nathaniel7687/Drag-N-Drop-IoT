@@ -78,7 +78,8 @@ void *thread_recvProgramFromServer(void *data)
             size_t fileSize = 0;
             size_t readSize = 0;
             FILE *file = fopen("recvedProgram", "wb");
-            char buff[MAX_FILE_BUFF_SIZE] = {'\0'};
+            char buff[MAX_FILE_BUFF_SIZE];
+            memset(buff, 0x00, MAX_FILE_BUFF_SIZE);
 
             read(client_fd, &fileSize, sizeof(size_t));
             printf("> File size: %zuKB\n", fileSize);
