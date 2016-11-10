@@ -51,7 +51,7 @@ void *thread_recvDeviceInfoFromClient(void *tData){
     memset((void *)&server_addr, 0x00, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_addr.sin_port = htons(12122);
+    server_addr.sin_port = htons(12123);
 
     bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
     listen(server_fd, 5);
@@ -201,7 +201,7 @@ void *thread_sendDeviceInfoToServer(void *tData)
     server_addr.sin_family = AF_INET;
 		';
 
-$s_end = 'server_addr.sin_port = htons(12122);
+$s_end = 'server_addr.sin_port = htons(12123);
     while (connect(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
     {
         perror("> Connect to server error");

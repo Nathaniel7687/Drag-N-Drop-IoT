@@ -20,6 +20,8 @@ S_OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(S_SRCS)))
 R_SRCS=$(wildcard $(SRCDIR)/*recvDeviceInfo.c)
 R_OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(R_SRCS)))
 
+BCC=arm-linux-gnueabihf-gcc
+
 BS_TARGET=./PiBuild/sensor
 BA_TARGET=./PiBuild/actuator
 BINCDIR=./PiBuild/inc
@@ -53,18 +55,18 @@ clean:
 build: $(BS_TARGET) $(BA_TARGET)
 
 $(BS_TARGET): $(BS_OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(BCC) -march=armv7-a $(CFLAGS) $(BCFLAGS) $^ -o $@
 
 $(BA_TARGET): $(BA_OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(BCC) -march=armv7-a $(CFLAGS) $(BCFLAGS) $^ -o $@
 
 $(BS_OBJS): $(BOBJDIR)/%.o: $(BSRCDIR)/%.c
 	@mkdir -p $(BOBJDIR)
-	$(CC) -I $(BINCDIR) -c $(CFLAGS) $< -o $@
+	$(BCC) -I $(BINCDIR) -c $(CFLAGS) $(BCFLAGS) $< -o $@
 
 $(BA_OBJS): $(BOBJDIR)/%.o: $(BSRCDIR)/%.c
 	@mkdir -p $(BOBJDIR)
-	$(CC) -I $(BINCDIR) -c $(CFLAGS) $< -o $@
+	$(BCC) -I $(BINCDIR) -c $(CFLAGS) $(BCFLAGS) $< -o $@
 
 bclean:
 	$(DEL) -rf $(BOBJDIR)/*.o

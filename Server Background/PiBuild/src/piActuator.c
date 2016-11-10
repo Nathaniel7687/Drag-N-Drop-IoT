@@ -49,7 +49,7 @@ void *thread_recvDeviceInfoFromClient(void *tData){
     memset((void *)&server_addr, 0x00, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_addr.sin_port = htons(12122);
+    server_addr.sin_port = htons(12123);
 
     bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
     listen(server_fd, 5);

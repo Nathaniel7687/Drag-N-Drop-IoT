@@ -12,7 +12,7 @@
 #include <unistd.h> // read(), write(), access(), R_OK, W_OK
 
 #define MILLISECOND 100000
-#define MAX_FILE_BUFF_SIZE 4096
+#define MAX_FILE_BUFF_SIZE 512
 
 void delay(float);
 void printfln();

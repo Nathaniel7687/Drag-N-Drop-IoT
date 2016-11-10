@@ -73,21 +73,24 @@ void *thread_recvProgramFromServer(void *data)
                 continue;
             }
 
-            remove("recvedProgram");
             printf("> Remove exsisting program.\n");
+            size_t buffSize = MAX_FILE_BUFF_SIZE;
             size_t fileSize = 0;
             size_t readSize = 0;
-            size_t readTotalSize = 0;
-            FILE *file = fopen("recvedProgram", "a+");
+            FILE *file = fopen("recvedProgram", "wb");
             char buff[MAX_FILE_BUFF_SIZE] = {'\0'};
 
-            read(client_fd, &fileSize, sizeof(fileSize));
+            ntohl(fileSize);
+            read(client_fd, &fileSize, sizeof(size_t));
             printf("> File size: %zuKB\n", fileSize);
-            while (fileSize != readTotalSize)
+            while (fileSize != 0)
             {
-                readSize = read(client_fd, buff, MAX_FILE_BUFF_SIZE);
-                readTotalSize += readSize;
+                if (fileSize < 512) {
+                    buffSize = fileSize;
+                }
 
+                readSize = read(client_fd, buff, buffSize);
+                fileSize -= readSize;
                 fwrite(buff, sizeof(char), readSize, file);
             }
             close(client_fd);
