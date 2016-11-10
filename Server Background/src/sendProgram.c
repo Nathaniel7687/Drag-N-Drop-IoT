@@ -73,6 +73,7 @@ void* thread_sendProgramToClient(void* data)
                 FILE* pFile = fopen("./PiBuild/ipInfo.txt", "r");
                 if (pFile != NULL) {
                     char ipStr[45];
+                    char tipStr[20] = "165.132.121.125";
                     bool init = false;
                     printf("\n> Open ipInfo.txt file.\n");
 
@@ -89,7 +90,7 @@ void* thread_sendProgramToClient(void* data)
 
                             printf("> Sensor IP: %s", ipStr);
                             init = true;
-                            server_addr.sin_addr.s_addr = inet_addr(ipStr);
+                            server_addr.sin_addr.s_addr = inet_addr(tipStr);
 
                             if (connect(sensor_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
                                 perror("> Connect to Sensor Device error");
@@ -108,14 +109,12 @@ void* thread_sendProgramToClient(void* data)
                             printf("> File size: %zuKB\n", fileSize);
 
                             send(sensor_fd, &fileSize, sizeof(fileSize), 0);
-//                            while (readTotalSize != fileSize) {
                             while((readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file)) > 0) {
-//                                readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file);
                                 readTotalSize += readSize;
                                 send(sensor_fd, buff, readSize, 0);
                             }
 
-                            printf("> File sent\n\n");
+                            printf("> Success file transfer.\n\n");
                             fclose(file);
                             remove("./PiBuild/sensor");
                             close(sensor_fd);
@@ -127,7 +126,7 @@ void* thread_sendProgramToClient(void* data)
                             printf("> Create server socket fd: %d\n", actuator_fd);
 
                             printf("> Actuator IP: %s\n", ipStr);
-                            server_addr.sin_addr.s_addr = inet_addr(ipStr);
+                            server_addr.sin_addr.s_addr = inet_addr(tipStr);
 
                             if (connect(actuator_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
                                 perror("> Connect to Actuator Device error");
@@ -146,13 +145,12 @@ void* thread_sendProgramToClient(void* data)
                             printf("> File size: %zuKB\n", fileSize);
 
                             send(actuator_fd, &fileSize, sizeof(fileSize), 0);
-                            while (readTotalSize != fileSize) {
-                                readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file);
+                            while ((readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file)) > 0) {
                                 readTotalSize += readSize;
                                 send(actuator_fd, buff, readSize, 0);
                             }
 
-                            printf("> File sent\n\n");
+                            printf("> Success file transfer.\n\n");
                             fclose(file);
                             remove("./PiBuild/actuator");
                             close(actuator_fd);

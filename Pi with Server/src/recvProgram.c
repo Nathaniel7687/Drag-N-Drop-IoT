@@ -73,23 +73,27 @@ void *thread_recvProgramFromServer(void *data)
                 continue;
             }
 
+            remove("recvedProgram");
+            printf("> Remove exsisting program.\n");
             size_t fileSize = 0;
             size_t readSize = 0;
+            size_t readTotalSize = 0;
             FILE *file = fopen("recvedProgram", "a+");
             char buff[MAX_FILE_BUFF_SIZE] = {'\0'};
 
             read(client_fd, &fileSize, sizeof(fileSize));
             printf("> File size: %zuKB\n", fileSize);
-            while (fileSize != 0)
+            while (fileSize != readTotalSize)
             {
                 readSize = read(client_fd, buff, MAX_FILE_BUFF_SIZE);
-                fileSize -= readSize;
+                readTotalSize += readSize;
 
                 fwrite(buff, sizeof(char), readSize, file);
             }
             close(client_fd);
             fclose(file);
             chmod("recvedProgram", 0777);
+            printf("> Sucess file receive.\n");
         }
 
         // This section is run the program.
@@ -101,6 +105,7 @@ void *thread_recvProgramFromServer(void *data)
                 execl("/home/nathaniel/Drag-N-Drop-IoT/Pi with Server/recvedProgram", "recvedProgram", NULL);
                 return 0;
             }
+            printf("> Run received program.\n");
         }
     }
 
