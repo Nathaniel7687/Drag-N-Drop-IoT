@@ -1,6 +1,5 @@
 DEL=rm
-CC=gcc
-#CC=arm-linux-gnueabihf-gcc
+CC=arm-linux-gnueabihf-gcc
 
 CFLAGS+=-static
 CFLAGS+=-pthread

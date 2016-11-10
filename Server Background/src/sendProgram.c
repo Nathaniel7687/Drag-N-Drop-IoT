@@ -99,7 +99,6 @@ void* thread_sendProgramToClient(void* data)
                             }
 
                             size_t fileSize = 0;
-                            size_t fileSizeForNetwork = 0;
                             size_t readSize = 0;
                             size_t readTotalSize = 0;
                             FILE* file = fopen("./PiBuild/sensor", "rb");
@@ -110,8 +109,7 @@ void* thread_sendProgramToClient(void* data)
                             fseek(file, 0, SEEK_SET);
                             printf("> File size: %zuKB\n", fileSize);
 
-                            fileSizeForNetwork = htonl(fileSize);
-                            send(sensor_fd, &fileSizeForNetwork, sizeof(size_t), 0);
+                            send(sensor_fd, &fileSize, sizeof(size_t), 0);
                             while(readTotalSize != fileSize) {
                                 readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file);
                                 readTotalSize += readSize;
