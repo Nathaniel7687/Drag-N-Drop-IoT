@@ -73,6 +73,7 @@ void *thread_recvProgramFromServer(void *data)
                 continue;
             }
 
+            system("sudo pkill recvedProgram");
             printf("> Remove exsisting program.\n");
             uint32_t buffSize = MAX_FILE_BUFF_SIZE;
             uint32_t fileSize = 0;
@@ -101,7 +102,6 @@ void *thread_recvProgramFromServer(void *data)
 
         // This section is run the program.
         {
-            system("pkill recvedProgram");
             int pid = fork();
             if (pid == 0)
             {

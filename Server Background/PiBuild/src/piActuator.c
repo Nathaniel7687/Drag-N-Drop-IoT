@@ -76,16 +76,16 @@ void *thread_recvDeviceInfoFromClient(void *tData){
 
             // TODO: Modify actuate condition.
             // BEGIN
-            if(sensor.light > 1000){ 
+            if(sensor.temperature > 50){ 
 						strcpy(level,"4");
 			}
-				else if(sensor.light > 950){ 
+				else if(sensor.temperature > 39){ 
 						strcpy(level,"3");
 			}
-				else if(sensor.light > 900){ 
+				else if(sensor.temperature > 28){ 
 						strcpy(level,"2");
 			}
-				else if(sensor.light > 850){ 
+				else if(sensor.temperature > 17){ 
 						strcpy(level,"1");
 			}
 				else { strcpy(level,"0");}
