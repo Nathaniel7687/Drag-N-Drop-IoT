@@ -82,7 +82,7 @@ void *thread_recvProgramFromServer(void *data)
             memset(buff, 0x00, MAX_FILE_BUFF_SIZE);
 
             read(client_fd, &fileSize, sizeof(uint32_t));
-            printf("> File size: %zuKB\n", fileSize);
+            printf("> File size: %d KB\n", fileSize);
             while (fileSize != 0)
             {
                 if (fileSize < 512) {

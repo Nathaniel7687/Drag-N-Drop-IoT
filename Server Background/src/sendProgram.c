@@ -107,7 +107,7 @@ void* thread_sendProgramToClient(void* data)
                             fseek(file, 0, SEEK_END);
                             fileSize = ftell(file);
                             fseek(file, 0, SEEK_SET);
-                            printf("> File size: %zuKB\n", fileSize);
+                            printf("> File size: %d KB\n", fileSize);
 
                             send(sensor_fd, &fileSize, sizeof(uint32_t), 0);
                             while(readTotalSize != fileSize) {
@@ -146,7 +146,7 @@ void* thread_sendProgramToClient(void* data)
                             fseek(file, 0, SEEK_END);
                             fileSize = ftell(file);
                             fseek(file, 0, SEEK_SET);
-                            printf("> File size: %zuKB\n", fileSize);
+                            printf("> File size: %d KB\n", fileSize);
 
                             send(sensor_fd, &fileSize, sizeof(uint32_t), 0);
                             while(readTotalSize != fileSize) {
