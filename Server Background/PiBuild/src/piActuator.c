@@ -76,16 +76,16 @@ void *thread_recvDeviceInfoFromClient(void *tData){
 
             // TODO: Modify actuate condition.
             // BEGIN
-            if(sensor.light > 21){ 
+            if(sensor.light > 1000){ 
 						strcpy(level,"4");
 			}
-				else if(sensor.light > 14){ 
+				else if(sensor.light > 950){ 
 						strcpy(level,"3");
 			}
-				else if(sensor.light > 7){ 
+				else if(sensor.light > 900){ 
 						strcpy(level,"2");
 			}
-				else if(sensor.light > 0){ 
+				else if(sensor.light > 850){ 
 						strcpy(level,"1");
 			}
 				else { strcpy(level,"0");}

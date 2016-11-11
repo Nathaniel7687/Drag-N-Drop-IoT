@@ -41,7 +41,6 @@ void printfln()
 
 void *thread_recvProgramFromServer(void *data)
 {
-    int pid;
     printf("> Create manageProgramFromServer thread\n");
 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
@@ -102,10 +101,8 @@ void *thread_recvProgramFromServer(void *data)
 
         // This section is run the program.
         {
-            if (pid != 0) {
-                kill(pid, SIGKILL);
-            }
-            pid = fork();
+            system("pkill recvedProgram");
+            int pid = fork();
             if (pid == 0)
             {
                 // TODO: Have to change the program path.
