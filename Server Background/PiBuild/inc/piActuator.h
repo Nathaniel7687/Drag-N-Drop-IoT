@@ -1,4 +1,4 @@
-#define USB_SERIAL "/dev/ttyACM1"
+#define USB_SERIAL "/dev/ttyACM0"
 #define BAUD_RATE 115200
 #define DATA_BIT 8
 #define STOP_BIT 1
