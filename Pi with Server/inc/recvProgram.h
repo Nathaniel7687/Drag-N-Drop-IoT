@@ -3,6 +3,7 @@
 #include <math.h>
 #include <netinet/in.h>
 #include <pthread.h>
+#include <signal.h>
 #include <stdbool.h> // bool, true, false
 #include <stdio.h>
 #include <stdlib.h>
