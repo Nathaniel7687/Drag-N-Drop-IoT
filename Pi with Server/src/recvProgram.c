@@ -74,14 +74,14 @@ void *thread_recvProgramFromServer(void *data)
             }
 
             printf("> Remove exsisting program.\n");
-            size_t buffSize = MAX_FILE_BUFF_SIZE;
-            size_t fileSize = 0;
-            size_t readSize = 0;
+            uint32_t buffSize = MAX_FILE_BUFF_SIZE;
+            uint32_t fileSize = 0;
+            uint32_t readSize = 0;
             FILE *file = fopen("recvedProgram", "wb");
             char buff[MAX_FILE_BUFF_SIZE];
             memset(buff, 0x00, MAX_FILE_BUFF_SIZE);
 
-            read(client_fd, &fileSize, sizeof(size_t));
+            read(client_fd, &fileSize, sizeof(uint32_t));
             printf("> File size: %zuKB\n", fileSize);
             while (fileSize != 0)
             {

@@ -97,9 +97,9 @@ void* thread_sendProgramToClient(void* data)
                                 continue;
                             }
 
-                            size_t fileSize = 0;
-                            size_t readSize = 0;
-                            size_t readTotalSize = 0;
+                            uint32_t fileSize = 0;
+                            uint32_t readSize = 0;
+                            uint32_t readTotalSize = 0;
                             FILE* file = fopen("./PiBuild/sensor", "rb");
                             char buff[MAX_FILE_BUFF_SIZE];
                             memset(buff, 0x00, MAX_FILE_BUFF_SIZE);
@@ -109,7 +109,7 @@ void* thread_sendProgramToClient(void* data)
                             fseek(file, 0, SEEK_SET);
                             printf("> File size: %zuKB\n", fileSize);
 
-                            send(sensor_fd, &fileSize, sizeof(size_t), 0);
+                            send(sensor_fd, &fileSize, sizeof(uint32_t), 0);
                             while(readTotalSize != fileSize) {
                                 readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file);
                                 readTotalSize += readSize;
@@ -136,9 +136,9 @@ void* thread_sendProgramToClient(void* data)
                                 continue;
                             }
 
-                            size_t fileSize = 0;
-                            size_t readSize = 0;
-                            size_t readTotalSize = 0;
+                            uint32_t fileSize = 0;
+                            uint32_t readSize = 0;
+                            uint32_t readTotalSize = 0;
                             FILE* file = fopen("./PiBuild/actuator", "rb");
                             char buff[MAX_FILE_BUFF_SIZE] = { '\0' };
                             memset(buff, 0x00, MAX_FILE_BUFF_SIZE);
@@ -148,7 +148,7 @@ void* thread_sendProgramToClient(void* data)
                             fseek(file, 0, SEEK_SET);
                             printf("> File size: %zuKB\n", fileSize);
 
-                            send(sensor_fd, &fileSize, sizeof(size_t), 0);
+                            send(sensor_fd, &fileSize, sizeof(uint32_t), 0);
                             while(readTotalSize != fileSize) {
                                 readSize = fread(buff, 1, MAX_FILE_BUFF_SIZE, file);
                                 readTotalSize += readSize;
